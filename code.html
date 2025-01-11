@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Hub de Sites - Edição Avançada</title>
+    <meta name="description" content="Um hub personalizado para seus sites favoritos, com recursos avançados.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔗</text></svg>">
+    <style>
+        :root {
+            --bg-color: #181818;
+            --text-color: #f0f0f0;
+            --primary-color: #007bff;
+            --secondary-color: #5cb85c;
+            --accent-color: #ffc107;
+            --item-bg: #333;
+            --border-color: #555;
+            --hover-overlay: rgba(0, 0, 0, 0.85);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-color 0.3s ease;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border-color);
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5em;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        #top-bar {
+            width: 95%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #search-container {
+            display: flex;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        #search-input {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--item-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+            width: 100%;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        #search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+
+        #filter-tags {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            background-color: var(--item-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            appearance: none; /* Remove estilos padrão do navegador */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+            background-repeat: no-repeat;
+            background-position-x: 100%;
+            background-position-y: 5px;
+            margin-left: 10px;
+        }
+
+        #filter-tags:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+
+        #site-grid-container {
+            width: 95%;
+            max-width: 1400px;
+            padding-bottom: 30px;
+        }
+
+        #site-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .site-item {
+            position: relative;
+            background-color: var(--item-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            user-select: none;
+            min-width: 50px;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Distribute space between image and overlay */
+        }
+
+        .site-item:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .site-item img {
+            width: 100%;
+            height: auto; /* Maintain aspect ratio */
+            aspect-ratio: 1 / 1; /* Enforce square aspect ratio */
+            object-fit: cover;
+            display: block;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .site-item img.loading {
+            filter: blur(5px);
+            opacity: 0.6;
+        }
+
+        .site-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--hover-overlay);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .site-item:hover .site-overlay {
+            opacity: 1;
+        }
+
+        .site-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-button, .delete-button {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .delete-button {
+            background-color: #dc3545;
+        }
+
+        .edit-button:hover {
+            background-color: #4cae4c;
+        }
+
+        .delete-button:hover {
+            background-color: #c82333;
+        }
+
+        #add-site-button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #add-site-button:hover {
+            background-color: #0056b3;
+        }
+
+        #modal-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #modal-content {
+            background-color: var(--bg-color);
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+            overflow-y: auto; /* Enable scrolling if content overflows */
+            max-height: 90vh;
+        }
+
+        #modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        .modal-input-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--item-bg);
+            color: var(--text-color);
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .modal-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+        }
+
+        .modal-buttons {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            background-color: var(--primary-color);
+            color: var(--text-color);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-left: 15px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .modal-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        .modal-buttons button.cancel-button {
+            background-color: #6c757d;
+        }
+
+        .modal-buttons button.cancel-button:hover {
+            background-color: #5a6268;
+        }
+
+        /* Import/Export Styles */
+        #import-export-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        #import-export-buttons button {
+            background-color: var(--accent-color);
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        #import-export-buttons button:hover {
+            background-color: #daa008;
+        }
+
+        /* Settings Styles */
+        #settings-button {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        #settings-button:hover {
+            opacity: 0.7;
+        }
+
+        #settings-modal-content {
+            text-align: center;
+        }
+
+        #settings-modal-content h3 {
+            margin-bottom: 15px;
+        }
+
+        .theme-option {
+            margin-bottom: 10px;
+        }
+
+        .theme-option button {
+            background-color: var(--item-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .theme-option button:hover {
+            background-color: #444;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            #top-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #search-container {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            #filter-tags {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            #site-grid {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 15px;
+            }
+
+            .modal-buttons {
+                text-align: center;
+            }
+
+            .modal-buttons button {
+                margin: 5px;
+            }
+
+            #import-export-buttons {
+                flex-direction: column;
+            }
+
+            #import-export-buttons button {
+                width: 100%;
+                margin-bottom: 5px;
+            }
+        }
+
+        .site-item-notes {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: var(--text-color);
+            padding: 10px;
+            font-size: 0.9em;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            box-sizing: border-box;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .site-item:hover .site-item-notes {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Meu Hub de Sites</h1>
+    </header>
+
+    <div id="top-bar">
+        <div id="search-container">
+            <input type="text" id="search-input" placeholder="Pesquisar sites...">
+            <select id="filter-tags">
+                <option value="">Todas as Tags</option>
+            </select>
+        </div>
+        <div id="import-export-buttons">
+            <button id="import-sites">Importar</button>
+            <button id="export-sites">Exportar</button>
+        </div>
+        <button id="settings-button">⚙️</button>
+    </div>
+
+    <div id="site-grid-container">
+        <div id="site-grid">
+            <!-- Seus sites serão adicionados aqui -->
+        </div>
+        <button id="add-site-button">Adicionar Site</button>
+    </div>
+
+    <div id="modal-container">
+        <div id="modal-content">
+            <!-- Conteúdo do modal será inserido aqui via JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        const siteGrid = document.getElementById('site-grid');
+        const addSiteButton = document.getElementById('add-site-button');
+        const modalContainer = document.getElementById('modal-container');
+        const modalContent = document.getElementById('modal-content');
+        const searchInput = document.getElementById('search-input');
+        const filterTags = document.getElementById('filter-tags');
+        const importSitesButton = document.getElementById('import-sites');
+        const exportSitesButton = document.getElementById('export-sites');
+        const settingsButton = document.getElementById('settings-button');
+
+        let editingSiteIndex = null;
+        let sites = JSON.parse(localStorage.getItem('mySites')) || [
+            { title: 'Meu Blog', url: 'https://seublog.com', imageUrl: 'https://via.placeholder.com/300', tags: ['blog', 'artigos'], notes: 'Meu blog pessoal sobre tecnologia.' },
+            { title: 'Meu Portfolio', url: 'https://seuportfolio.com', imageUrl: 'https://via.placeholder.com/300/007bff', tags: ['portfolio', 'trabalhos'], notes: 'Meu portfolio profissional.' },
+            { title: 'Desec', url: 'https://example.com', imageUrl: 'https://via.placeholder.com/300/ff0000', tags: ['exemplo'], notes: 'Um site de exemplo.' },
+        ];
+
+        function saveSites() {
+            localStorage.setItem('mySites', JSON.stringify(sites));
+        }
+
+        function createImageElement(site) {
+            const img = document.createElement('img');
+            img.src = site.imageUrl || 'https://via.placeholder.com/300/555?text=Sem+Imagem';
+            img.alt = site.title;
+            img.classList.add('loading');
+            img.onload = () => img.classList.remove('loading');
+            img.onerror = () => {
+                img.src = 'https://via.placeholder.com/300/888?text=Erro+na+Imagem';
+                img.classList.remove('loading');
+            };
+            return img;
+        }
+
+        function createSiteElement(site, index) {
+            const siteItem = document.createElement('div');
+            siteItem.classList.add('site-item');
+
+            const img = createImageElement(site);
+
+            const overlay = document.createElement('div');
+            overlay.classList.add('site-overlay');
+
+            const actions = document.createElement('div');
+            actions.classList.add('site-actions');
+
+            const editButton = document.createElement('button');
+            editButton.classList.add('edit-button');
+            editButton.textContent = 'Editar';
+            editButton.onclick = (event) => {
+                event.stopPropagation();
+                openAddEditModal(index);
+            };
+
+            const deleteButton = document.createElement('button');
+            deleteButton.classList.add('delete-button');
+            deleteButton.textContent = 'Excluir';
+            deleteButton.onclick = (event) => {
+                event.stopPropagation();
+                deleteSite(index);
+            };
+
+            actions.appendChild(editButton);
+            actions.appendChild(deleteButton);
+            overlay.appendChild(actions);
+
+            const notes = document.createElement('div');
+            notes.classList.add('site-item-notes');
+            notes.textContent = site.notes;
+            siteItem.appendChild(notes);
+
+            siteItem.appendChild(img);
+            siteItem.appendChild(overlay);
+
+            siteItem.onclick = () => window.open(site.url, '_blank');
+
+            return siteItem;
+        }
+
+        function renderSites() {
+            siteGrid.innerHTML = '';
+            sites.forEach((site, index) => {
+                siteGrid.appendChild(createSiteElement(site, index));
+            });
+            populateTagFilter();
+        }
+
+        function populateTagFilter() {
+            const allTags = new Set();
+            sites.forEach(site => {
+                site.tags.forEach(tag => allTags.add(tag));
+            });
+
+            filterTags.innerHTML = '<option value="">Todas as Tags</option>';
+            allTags.forEach(tag => {
+                const option = document.createElement('option');
+                option.value = tag;
+                option.textContent = tag;
+                filterTags.appendChild(option);
+            });
+        }
+
+        addSiteButton.addEventListener('click', () => {
+            editingSiteIndex = null;
+            openAddEditModal();
+        });
+
+        function openAddEditModal(index) {
+            editingSiteIndex = index;
+            modalContent.innerHTML = `
+                <h2>${index !== undefined ? 'Editar Site' : 'Adicionar Novo Site'}</h2>
+                <form id="site-form">
+                    <div class="modal-input-group">
+                        <label for="site-title">Título do Site:</label>
+                        <input type="text" id="site-title" class="modal-input" required>
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="site-url">URL do Site:</label>
+                        <input type="url" id="site-url" class="modal-input" required>
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="site-image">URL da Imagem:</label>
+                        <input type="url" id="site-image" class="modal-input">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="site-tags">Tags (separadas por vírgula):</label>
+                        <input type="text" id="site-tags" class="modal-input">
+                    </div>
+                    <div class="modal-input-group">
+                        <label for="site-notes">Notas/Descrição:</label>
+                        <textarea id="site-notes" class="modal-input"></textarea>
+                    </div>
+                    <div class="modal-buttons">
+                        <button type="button" class="cancel-button" onclick="closeModal()">Cancelar</button>
+                        <button type="submit">${index !== undefined ? 'Salvar Alterações' : 'Adicionar Site'}</button>
+                    </div>
+                </form>
+            `;
+            modalContainer.style.display = 'flex';
+            const form = document.getElementById('site-form');
+            if (index !== undefined) {
+                const site = sites[index];
+                form.querySelector('#site-title').value = site.title;
+                form.querySelector('#site-url').value = site.url;
+                form.querySelector('#site-image').value = site.imageUrl;
+                form.querySelector('#site-tags').value = site.tags.join(',');
+                form.querySelector('#site-notes').value = site.notes;
+            }
+            form.addEventListener('submit', handleFormSubmit);
+        }
+
+        function closeModal() {
+            modalContainer.style.display = 'none';
+            modalContent.innerHTML = ''; // Limpar o conteúdo do modal
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            const title = document.getElementById('site-title').value;
+            const url = document.getElementById('site-url').value;
+            const imageUrl = document.getElementById('site-image').value;
+            const tagsInput = document.getElementById('site-tags').value;
+            const tags = tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+            const notes = document.getElementById('site-notes').value;
+
+            const newSite = { title, url, imageUrl, tags, notes };
+
+            if (editingSiteIndex !== null) {
+                sites[editingSiteIndex] = newSite;
+            } else {
+                sites.push(newSite);
+            }
+
+            saveSites();
+            renderSites();
+            closeModal();
+        }
+
+        function deleteSite(index) {
+            if (confirm('Tem certeza de que deseja excluir este site?')) {
+                sites.splice(index, 1);
+                saveSites();
+                renderSites();
+            }
+        }
+
+        searchInput.addEventListener('input', () => {
+            filterSites();
+        });
+
+        filterTags.addEventListener('change', () => {
+            filterSites();
+        });
+
+        function filterSites() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedTag = filterTags.value;
+
+            const filteredSites = sites.filter(site => {
+                const matchesSearch = site.title.toLowerCase().includes(searchTerm) || site.tags.some(tag => tag.toLowerCase().includes(searchTerm)) || site.notes.toLowerCase().includes(searchTerm);
+                const matchesTag = selectedTag === '' || site.tags.includes(selectedTag);
+                return matchesSearch && matchesTag;
+            });
+            renderFilteredSites(filteredSites);
+        }
+
+        function renderFilteredSites(filteredSites) {
+            siteGrid.innerHTML = '';
+            filteredSites.forEach((site, index) => {
+                const originalIndex = sites.findIndex(s => s.title === site.title && s.url === site.url);
+                if (originalIndex !== -1) {
+                    siteGrid.appendChild(createSiteElement(site, originalIndex));
+                }
+            });
+        }
+
+        importSitesButton.addEventListener('click', () => {
+            modalContent.innerHTML = `
+                <h2>Importar Sites</h2>
+                <p>Cole o JSON dos seus sites abaixo:</p>
+                <textarea id="import-data" class="modal-input" style="height: 200px;"></textarea>
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-button" onclick="closeModal()">Cancelar</button>
+                    <button type="button" onclick="handleImport()">Importar</button>
+                </div>
+            `;
+            modalContainer.style.display = 'flex';
+        });
+
+        function handleImport() {
+            const importData = document.getElementById('import-data').value;
+            try {
+                const importedSites = JSON.parse(importData);
+                if (Array.isArray(importedSites)) {
+                    sites = importedSites;
+                    saveSites();
+                    renderSites();
+                    closeModal();
+                } else {
+                    alert('Dados inválidos. Certifique-se de que o JSON é um array.');
+                }
+            } catch (e) {
+                alert('Erro ao importar os dados. Verifique o formato JSON.');
+            }
+        }
+
+        exportSitesButton.addEventListener('click', () => {
+            const jsonString = JSON.stringify(sites);
+            modalContent.innerHTML = `
+                <h2>Exportar Sites</h2>
+                <p>Copie o JSON abaixo para fazer um backup dos seus sites:</p>
+                <textarea id="export-data" class="modal-input" style="height: 200px;" readonly>${jsonString}</textarea>
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-button" onclick="closeModal()">Fechar</button>
+                    <button type="button" onclick="copyToClipboard()">Copiar para a Área de Transferência</button>
+                </div>
+            `;
+            modalContainer.style.display = 'flex';
+        });
+
+        function copyToClipboard() {
+            const textarea = document.getElementById('export-data');
+            textarea.select();
+            document.execCommand('copy');
+            alert('Dados copiados para a área de transferência!');
+        }
+
+        settingsButton.addEventListener('click', () => {
+            modalContent.innerHTML = `
+                <div id="settings-modal-content">
+                    <h2>Configurações</h2>
+                    <h3>Temas</h3>
+                    <div class="theme-option">
+                        <button onclick="setTheme('dark')">Escuro</button>
+                    </div>
+                    <div class="theme-option">
+                        <button onclick="setTheme('light')">Claro</button>
+                    </div>
+                    <div class="modal-buttons">
+                        <button type="button" class="cancel-button" onclick="closeModal()">Fechar</button>
+                    </div>
+                </div>
+            `;
+            modalContainer.style.display = 'flex';
+        });
+
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.style.backgroundColor = '#181818';
+                document.body.style.color = '#f0f0f0';
+                // Adicione mais ajustes de cor conforme necessário
+            } else if (theme === 'light') {
+                document.body.style.backgroundColor = '#f0f0f0';
+                document.body.style.color = '#333';
+                // Adicione mais ajustes de cor conforme necessário para o tema claro
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        // Carregar tema salvo
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
+        }
+
+        renderSites();
+    </script>
+</body>
+</html>
