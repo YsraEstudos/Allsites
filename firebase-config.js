@@ -50,43 +50,70 @@ googleProvider.addScope('email');
 // Auth functions
 export const signInWithGoogle = async () => {
     try {
+        // Rate limiting
+        if (!rateLimiter.isAllowed('google-signin')) {
+            return { success: false, error: 'Muitas tentativas de login. Tente novamente em 15 minutos.' };
+        }
+
         const result = await signInWithPopup(auth, googleProvider);
         const user = result.user;
         
-        // Save user data to Firestore
-        await setDoc(doc(db, 'users', user.uid), {
+        // Validate user data
+        if (!user.uid || !validateEmail(user.email)) {
+            throw new Error('Dados de usuário inválidos');
+        }
+
+        // Save user data to Firestore with sanitized data
+        const userData = {
             uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
+            email: sanitizeInput(user.email),
+            displayName: sanitizeInput(user.displayName || ''),
+            photoURL: user.photoURL || '',
             lastLogin: new Date(),
-            isAnonymous: false
-        }, { merge: true });
+            isAnonymous: false,
+            createdAt: new Date(),
+            lastActivity: new Date()
+        };
+
+        await setDoc(doc(db, 'users', user.uid), userData, { merge: true });
         
         return { success: true, user };
     } catch (error) {
         console.error('Error signing in with Google:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: 'Erro ao fazer login com Google. Tente novamente.' };
     }
 };
 
 export const signInAnonymouslyFunc = async () => {
     try {
+        // Rate limiting
+        if (!rateLimiter.isAllowed('anonymous-signin')) {
+            return { success: false, error: 'Muitas tentativas de login. Tente novamente em 15 minutos.' };
+        }
+
         const result = await signInAnonymously(auth);
         const user = result.user;
         
+        if (!user.uid) {
+            throw new Error('UID de usuário inválido');
+        }
+
         // Save anonymous user data to Firestore
-        await setDoc(doc(db, 'users', user.uid), {
+        const userData = {
             uid: user.uid,
             displayName: 'Usuário Anônimo',
             lastLogin: new Date(),
-            isAnonymous: true
-        }, { merge: true });
+            isAnonymous: true,
+            createdAt: new Date(),
+            lastActivity: new Date()
+        };
+
+        await setDoc(doc(db, 'users', user.uid), userData, { merge: true });
         
         return { success: true, user };
     } catch (error) {
         console.error('Error signing in anonymously:', error);
-        return { success: false, error: error.message };
+        return { success: false, error: 'Erro ao entrar como visitante. Tente novamente.' };
     }
 };
 
@@ -111,13 +138,27 @@ export const getCurrentUser = () => {
 // Profile functions
 export const getUserProfile = async (uid) => {
     try {
+        const user = auth.currentUser;
+        
+        // Only allow users to access their own profile
+        if (!user || user.uid !== uid) {
+            throw new Error('Acesso não autorizado');
+        }
+
         const docRef = doc(db, 'users', uid);
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
-            return { success: true, profile: docSnap.data() };
+            const data = docSnap.data();
+            
+            // Update last activity
+            await updateDoc(docRef, { 
+                lastActivity: new Date() 
+            });
+            
+            return { success: true, profile: data };
         } else {
-            return { success: false, error: 'Profile not found' };
+            return { success: false, error: 'Perfil não encontrado' };
         }
     } catch (error) {
         console.error('Error getting user profile:', error);
@@ -129,20 +170,43 @@ export const updateUserProfile = async (uid, profileData) => {
     try {
         const user = auth.currentUser;
         
-        // Update Firebase Auth profile
+        if (!user || user.uid !== uid) {
+            throw new Error('Usuário não autorizado');
+        }
+
+        // Validate and sanitize input data
+        const sanitizedData = {};
+        
+        if (profileData.displayName !== undefined) {
+            const sanitizedName = sanitizeInput(profileData.displayName);
+            if (!validateDisplayName(sanitizedName)) {
+                throw new Error('Nome deve ter entre 2 e 50 caracteres');
+            }
+            sanitizedData.displayName = sanitizedName;
+        }
+
+        if (profileData.photoURL !== undefined) {
+            sanitizedData.photoURL = profileData.photoURL;
+        }
+
+        // Add security metadata
+        sanitizedData.lastUpdated = new Date();
+        sanitizedData.lastActivity = new Date();
+        
+        // Update Firebase Auth profile (only for non-anonymous users)
         if (user && !user.isAnonymous) {
-            await updateProfile(user, {
-                displayName: profileData.displayName,
-                photoURL: profileData.photoURL
-            });
+            const authUpdateData = {};
+            if (sanitizedData.displayName) authUpdateData.displayName = sanitizedData.displayName;
+            if (sanitizedData.photoURL) authUpdateData.photoURL = sanitizedData.photoURL;
+            
+            if (Object.keys(authUpdateData).length > 0) {
+                await updateProfile(user, authUpdateData);
+            }
         }
         
         // Update Firestore document
         const docRef = doc(db, 'users', uid);
-        await updateDoc(docRef, {
-            ...profileData,
-            lastUpdated: new Date()
-        });
+        await updateDoc(docRef, sanitizedData);
         
         return { success: true };
     } catch (error) {
@@ -184,15 +248,22 @@ export const deleteUserAccount = async () => {
     try {
         const user = auth.currentUser;
         if (!user) {
-            throw new Error('No user is currently signed in');
+            throw new Error('Nenhum usuário está conectado');
         }
+
+        // Rate limiting for account deletion
+        if (!rateLimiter.isAllowed(`delete-account-${user.uid}`)) {
+            throw new Error('Muitas tentativas de exclusão. Tente novamente em 15 minutos.');
+        }
+
+        const userId = user.uid;
         
-        // Delete user data from Firestore
-        await deleteDoc(doc(db, 'users', user.uid));
+        // Delete user data from Firestore first
+        await deleteDoc(doc(db, 'users', userId));
         
-        // Delete profile photo if exists
-        if (user.photoURL) {
-            await deleteProfilePhoto(user.uid, user.photoURL);
+        // Delete profile photo if exists (only for non-anonymous users)
+        if (user.photoURL && !user.isAnonymous) {
+            await deleteProfilePhoto(userId, user.photoURL);
         }
         
         // Delete the user account
@@ -202,6 +273,45 @@ export const deleteUserAccount = async () => {
     } catch (error) {
         console.error('Error deleting user account:', error);
         return { success: false, error: error.message };
+    }
+};
+
+// Security and validation utilities
+const sanitizeInput = (input) => {
+    if (typeof input !== 'string') return '';
+    return input.trim().replace(/[<>]/g, '');
+};
+
+const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+};
+
+const validateDisplayName = (name) => {
+    if (!name || typeof name !== 'string') return false;
+    const sanitized = sanitizeInput(name);
+    return sanitized.length >= 2 && sanitized.length <= 50;
+};
+
+const rateLimiter = {
+    attempts: new Map(),
+    maxAttempts: 5,
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    
+    isAllowed(key) {
+        const now = Date.now();
+        const attempts = this.attempts.get(key) || [];
+        
+        // Remove old attempts outside the window
+        const validAttempts = attempts.filter(time => now - time < this.windowMs);
+        
+        if (validAttempts.length >= this.maxAttempts) {
+            return false;
+        }
+        
+        validAttempts.push(now);
+        this.attempts.set(key, validAttempts);
+        return true;
     }
 };
 
@@ -248,3 +358,6 @@ export const linkAnonymousAccount = async (credential) => {
         return { success: false, error: error.message };
     }
 };
+
+// Export security utilities for frontend use
+export { sanitizeInput, validateEmail, validateDisplayName };
