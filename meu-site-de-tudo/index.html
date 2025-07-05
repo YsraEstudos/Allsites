@@ -304,45 +304,72 @@
         async function handleProfileSave(e) {
             e.preventDefault();
             
-            if (!currentUser) return;
+            if (!currentUser) {
+                console.error('No current user');
+                return;
+            }
             
             const saveBtn = document.getElementById('saveProfileBtn');
             const displayName = document.getElementById('profileDisplayName').value.trim();
             const photoUpload = document.getElementById('photoUpload');
             
+            console.log('Starting profile save for user:', currentUser.uid);
+            console.log('Display name:', displayName);
+            console.log('Has photo file:', !!photoUpload.files[0]);
+            
             saveBtn.disabled = true;
             saveBtn.textContent = 'Salvando...';
             
             try {
-                let photoURL = currentUser.photoURL;
+                let photoURL = currentUser.photoURL || '';
                 
-                // Handle photo upload
+                // Handle photo upload first
                 if (photoUpload.files[0]) {
+                    console.log('Uploading new photo...');
                     const uploadResult = await uploadProfilePhoto(currentUser.uid, photoUpload.files[0]);
                     if (uploadResult.success) {
                         photoURL = uploadResult.photoURL;
+                        console.log('Photo uploaded successfully:', photoURL);
+                    } else {
+                        throw new Error('Falha no upload da foto: ' + uploadResult.error);
                     }
                 } else if (document.getElementById('previewImage').style.display === 'none' && currentUser.photoURL) {
                     // Photo was removed
-                    await deleteProfilePhoto(currentUser.uid, currentUser.photoURL);
-                    photoURL = '';
+                    console.log('Removing photo...');
+                    const deleteResult = await deleteProfilePhoto(currentUser.uid, currentUser.photoURL);
+                    if (deleteResult.success) {
+                        photoURL = '';
+                        console.log('Photo removed successfully');
+                    } else {
+                        console.warn('Failed to delete photo, but continuing:', deleteResult.error);
+                        photoURL = '';
+                    }
                 }
                 
-                // Update profile
+                // Update profile with all data
+                console.log('Updating profile...');
                 const updateData = {
                     displayName: displayName,
                     photoURL: photoURL
                 };
                 
-                await updateUserProfile(currentUser.uid, updateData);
+                const updateResult = await updateUserProfile(currentUser.uid, updateData);
+                if (!updateResult.success) {
+                    throw new Error('Falha ao atualizar perfil: ' + updateResult.error);
+                }
+                
+                console.log('Profile updated successfully');
                 
                 // Reload profile in main page
+                console.log('Reloading profile display...');
                 await loadUserProfile(currentUser);
                 
                 hideProfileModal();
+                console.log('Profile save completed successfully');
+                
             } catch (error) {
                 console.error('Error saving profile:', error);
-                alert('Erro ao salvar perfil. Tente novamente.');
+                alert('Erro ao salvar perfil: ' + error.message);
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Salvar';

@@ -233,27 +233,55 @@ export function onAuthStateChange(callback) {
 // Profile management functions
 export async function updateUserProfile(userId, profileData) {
   try {
+    console.log('Updating profile for user:', userId, 'with data:', profileData);
+    
     const user = auth.currentUser;
-    if (user && user.uid === userId) {
-      // Update Firebase Auth profile
-      const updateData = {};
-      if (profileData.displayName !== undefined) updateData.displayName = profileData.displayName;
-      if (profileData.photoURL !== undefined) updateData.photoURL = profileData.photoURL;
-      
-      if (Object.keys(updateData).length > 0) {
-        await updateProfile(user, updateData);
-      }
+    if (!user) {
+      throw new Error('No user is currently signed in');
+    }
+    
+    if (user.uid !== userId) {
+      throw new Error('User ID mismatch');
+    }
+    
+    // Update Firebase Auth profile
+    const authUpdateData = {};
+    if (profileData.displayName !== undefined) authUpdateData.displayName = profileData.displayName;
+    if (profileData.photoURL !== undefined) authUpdateData.photoURL = profileData.photoURL;
+    
+    if (Object.keys(authUpdateData).length > 0) {
+      console.log('Updating Firebase Auth profile with:', authUpdateData);
+      await updateProfile(user, authUpdateData);
+      console.log('Firebase Auth profile updated successfully');
     }
     
     // Update Firestore document
+    console.log('Updating Firestore document');
     const userRef = doc(db, 'users', userId);
-    await updateDoc(userRef, {
-      ...profileData,
-      updatedAt: new Date()
-    });
     
+    // Check if document exists, if not create it
+    const userSnap = await getDoc(userRef);
+    if (!userSnap.exists()) {
+      console.log('Creating new user document in Firestore');
+      await setDoc(userRef, {
+        email: user.email,
+        displayName: profileData.displayName || '',
+        photoURL: profileData.photoURL || '',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+    } else {
+      console.log('Updating existing user document in Firestore');
+      await updateDoc(userRef, {
+        ...profileData,
+        updatedAt: new Date()
+      });
+    }
+    
+    console.log('Profile updated successfully');
     return { success: true };
   } catch (error) {
+    console.error('Error updating user profile:', error);
     return { success: false, error: error.message };
   }
 }
@@ -275,37 +303,85 @@ export async function getUserProfile(userId) {
 
 export async function uploadProfilePhoto(userId, file) {
   try {
-    // Create a reference to the file location
-    const fileRef = ref(storage, `profile-photos/${userId}/${file.name}`);
+    console.log('Starting photo upload for user:', userId);
+    console.log('File size:', file.size, 'bytes');
+    console.log('File type:', file.type);
     
-    // Upload the file
-    const snapshot = await uploadBytes(fileRef, file);
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error('Arquivo muito grande. Máximo: 5MB');
+    }
     
-    // Get the download URL
-    const downloadURL = await getDownloadURL(snapshot.ref);
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      throw new Error('Arquivo deve ser uma imagem');
+    }
     
-    // Update user profile with new photo URL
-    await updateUserProfile(userId, { photoURL: downloadURL });
+    // Create a unique filename to avoid conflicts
+    const timestamp = new Date().getTime();
+    const fileName = `${timestamp}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+    const fileRef = ref(storage, `profile-photos/${userId}/${fileName}`);
+    
+    console.log('Uploading file to:', `profile-photos/${userId}/${fileName}`);
+    
+    // Create a timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Upload timeout - tente novamente')), 30000); // 30 seconds
+    });
+    
+    // Upload the file with timeout
+    const uploadPromise = uploadBytes(fileRef, file);
+    const snapshot = await Promise.race([uploadPromise, timeoutPromise]);
+    console.log('File uploaded successfully');
+    
+    // Get the download URL with timeout
+    const urlPromise = getDownloadURL(snapshot.ref);
+    const downloadURL = await Promise.race([urlPromise, timeoutPromise]);
+    console.log('Download URL obtained:', downloadURL);
     
     return { success: true, photoURL: downloadURL };
   } catch (error) {
-    return { success: false, error: error.message };
+    console.error('Error uploading profile photo:', error);
+    let errorMessage = error.message;
+    
+    // Translate common Firebase errors
+    if (errorMessage.includes('storage/unauthorized')) {
+      errorMessage = 'Sem permissão para upload. Verifique se está logado.';
+    } else if (errorMessage.includes('storage/retry-limit-exceeded')) {
+      errorMessage = 'Falha no upload. Verifique sua conexão.';
+    } else if (errorMessage.includes('storage/invalid-format')) {
+      errorMessage = 'Formato de arquivo inválido.';
+    }
+    
+    return { success: false, error: errorMessage };
   }
 }
 
 export async function deleteProfilePhoto(userId, photoURL) {
   try {
-    // Delete from storage
-    if (photoURL) {
-      const photoRef = ref(storage, photoURL);
-      await deleteObject(photoRef);
-    }
+    console.log('Deleting photo for user:', userId, 'URL:', photoURL);
     
-    // Update user profile
-    await updateUserProfile(userId, { photoURL: '' });
+    // Delete from storage only if photoURL is a Firebase Storage URL
+    if (photoURL && photoURL.includes('firebasestorage.googleapis.com')) {
+      try {
+        // Extract the file path from the URL
+        const url = new URL(photoURL);
+        const pathMatch = url.pathname.match(/\/o\/(.+?)\?/);
+        if (pathMatch) {
+          const filePath = decodeURIComponent(pathMatch[1]);
+          const photoRef = ref(storage, filePath);
+          await deleteObject(photoRef);
+          console.log('Photo deleted from storage');
+        }
+      } catch (deleteError) {
+        console.warn('Could not delete photo from storage:', deleteError);
+        // Continue even if deletion fails - just update the profile
+      }
+    }
     
     return { success: true };
   } catch (error) {
+    console.error('Error deleting profile photo:', error);
     return { success: false, error: error.message };
   }
 }
@@ -319,4 +395,30 @@ export function getUserInitials(displayName, email) {
     return email.charAt(0).toUpperCase();
   }
   return 'U';
+}
+
+// Debug function to test Firebase connectivity
+export async function testFirebaseConnection() {
+  try {
+    console.log('Testing Firebase Auth...');
+    const user = auth.currentUser;
+    console.log('Current user:', user ? user.email : 'Not logged in');
+    
+    if (user) {
+      console.log('Testing Firestore...');
+      const userRef = doc(db, 'users', user.uid);
+      const userSnap = await getDoc(userRef);
+      console.log('Firestore access successful, user doc exists:', userSnap.exists());
+      
+      console.log('Testing Storage...');
+      // Try to create a reference to test storage access
+      const testRef = ref(storage, `test/${user.uid}/test.txt`);
+      console.log('Storage reference created successfully');
+    }
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Firebase connection test failed:', error);
+    return { success: false, error: error.message };
+  }
 }
