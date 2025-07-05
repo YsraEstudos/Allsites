@@ -9,13 +9,12 @@
 <body>
     <header>
         <div class="container">
-            <img src="imagens/logo.png" alt="Logo do Site" class="logo">
             <h1>Meu Site de Tudo</h1>
             <nav>
                 <ul>
                     <li><a href="index.html" class="active">Home</a></li>
-                    <li><a href="youtube/index.html">Hub do YouTube</a></li>
-                    <li><a href="estudos/index.html">Rastreador de Estudos</a></li>
+                    <li><a href="https://youtube-hub.netlify.app/" target="_blank" rel="noopener noreferrer">Hub do YouTube</a></li>
+                    <li><a href="https://study-tracker.netlify.app/" target="_blank" rel="noopener noreferrer">Rastreador de Estudos</a></li>
                 </ul>
             </nav>
             <div class="auth-section" id="authSection">
@@ -31,6 +30,7 @@
                         </div>
                         <div class="user-actions">
                             <button id="profileBtn" class="profile-btn" title="Editar Perfil">⚙️</button>
+                            <button id="linkAccountBtn" class="link-account-btn" title="Vincular Conta Google" style="display: none;">🔗</button>
                             <button id="logoutBtn" class="logout-btn">Sair</button>
                         </div>
                     </div>
@@ -55,13 +55,13 @@
                     <div class="card">
                         <h4>🎬 Hub Organizador do YouTube</h4>
                         <p>Organize, anote e gerencie seus vídeos e canais favoritos do YouTube com categorias personalizadas</p>
-                        <a href="youtube/index.html" class="btn">Acessar Hub</a>
+                        <a href="https://youtube-hub.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn">Acessar Hub</a>
                     </div>
 
                     <div class="card">
                         <h4>📚 Rastreador de Estudos</h4>
                         <p>Adicione tópicos de estudo e acompanhe seu progresso diário marcando 3 exercícios por matéria</p>
-                        <a href="estudos/index.html" class="btn">Acessar Rastreador</a>
+                        <a href="https://study-tracker.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn">Acessar Rastreador</a>
                     </div>
 
                     <div class="card">
@@ -88,7 +88,7 @@
     </footer>
 
     <script type="module">
-        import { onAuthStateChange, logoutUser, getUserProfile, updateUserProfile, uploadProfilePhoto, deleteProfilePhoto, getUserInitials } from './meu-site-de-tudo/firebase-config.js';
+        import { onAuthStateChange, logoutUser, getUserProfile, updateUserProfile, uploadProfilePhoto, deleteProfilePhoto, getUserInitials, deleteUserAccount, linkAnonymousAccount, signInWithGoogle } from './firebase-config.js';
 
         const userInfo = document.getElementById('userInfo');
         const loginPrompt = document.getElementById('loginPrompt');
@@ -99,6 +99,7 @@
         const profileInitials = document.getElementById('profileInitials');
         const logoutBtn = document.getElementById('logoutBtn');
         const profileBtn = document.getElementById('profileBtn');
+        const linkAccountBtn = document.getElementById('linkAccountBtn');
 
         let currentUser = null;
 
@@ -107,7 +108,15 @@
             currentUser = user;
             if (user) {
                 // User is signed in
-                userEmail.textContent = user.email;
+                userEmail.textContent = user.email || 'Usuário Anônimo';
+                
+                // Show/hide link account button for anonymous users
+                if (user.isAnonymous) {
+                    linkAccountBtn.style.display = 'block';
+                    linkAccountBtn.title = 'Vincular com Google para salvar seus dados';
+                } else {
+                    linkAccountBtn.style.display = 'none';
+                }
                 
                 // Load user profile
                 await loadUserProfile(user);
@@ -116,7 +125,7 @@
                 loginPrompt.style.display = 'none';
             } else {
                 // User is signed out - redirect to login
-                window.location.href = './auth/login.html';
+                window.location.href = 'auth/login.html';
             }
         });
 
@@ -129,27 +138,40 @@
                 const displayName = profile.displayName || user.displayName || '';
                 const photoURL = profile.photoURL || user.photoURL || '';
                 
-                // Update display name
-                userName.textContent = displayName || user.email.split('@')[0];
+                // Update display name - handle anonymous users
+                if (user.isAnonymous) {
+                    userName.textContent = profile.displayName || 'Usuário Anônimo';
+                } else {
+                    userName.textContent = displayName || user.email.split('@')[0];
+                }
                 
                 // Update profile photo
-                if (photoURL) {
+                if (photoURL && !user.isAnonymous) {
                     profileImage.src = photoURL;
                     profileImage.style.display = 'block';
                     profileInitials.style.display = 'none';
                 } else {
                     profileImage.style.display = 'none';
                     profileInitials.style.display = 'flex';
-                    profileInitials.textContent = getUserInitials(displayName, user.email);
+                    if (user.isAnonymous) {
+                        profileInitials.textContent = '👤';
+                    } else {
+                        profileInitials.textContent = getUserInitials(displayName, user.email);
+                    }
                 }
                 
             } catch (error) {
                 console.error('Error loading profile:', error);
                 // Use fallback values
-                userName.textContent = user.email.split('@')[0];
+                if (user.isAnonymous) {
+                    userName.textContent = 'Usuário Anônimo';
+                    profileInitials.textContent = '👤';
+                } else {
+                    userName.textContent = user.email.split('@')[0];
+                    profileInitials.textContent = getUserInitials('', user.email);
+                }
                 profileImage.style.display = 'none';
                 profileInitials.style.display = 'flex';
-                profileInitials.textContent = getUserInitials('', user.email);
             }
         }
 
@@ -157,7 +179,7 @@
         logoutBtn.addEventListener('click', async () => {
             try {
                 await logoutUser();
-                // Auth state observer will handle UI updates
+                // Auth state observer will handle redirect
             } catch (error) {
                 console.error('Error signing out:', error);
             }
@@ -167,6 +189,27 @@
         profileBtn.addEventListener('click', () => {
             if (currentUser) {
                 showProfileModal();
+            }
+        });
+
+        // Link account functionality for anonymous users
+        linkAccountBtn.addEventListener('click', async () => {
+            if (currentUser && currentUser.isAnonymous) {
+                try {
+                    linkAccountBtn.disabled = true;
+                    linkAccountBtn.textContent = '🔄';
+                    
+                    // For anonymous users, we'll sign out and sign in with Google
+                    // This is simpler than linking accounts
+                    await logoutUser();
+                    window.location.href = 'auth/login.html';
+                } catch (error) {
+                    console.error('Error redirecting to link account:', error);
+                    alert('Erro ao vincular conta: ' + error.message);
+                } finally {
+                    linkAccountBtn.disabled = false;
+                    linkAccountBtn.textContent = '🔗';
+                }
             }
         });
 
@@ -212,6 +255,7 @@
                             <div class="profile-modal-actions">
                                 <button type="button" class="profile-cancel-btn" id="cancelProfileBtn">Cancelar</button>
                                 <button type="submit" class="profile-save-btn" id="saveProfileBtn">Salvar</button>
+                                <button type="button" class="profile-delete-btn" id="deleteAccountBtn" style="display: none;">Excluir Conta</button>
                             </div>
                         </form>
                     </div>
@@ -229,6 +273,7 @@
             document.getElementById('photoUpload').addEventListener('change', handlePhotoUpload);
             document.getElementById('removePhotoBtn').addEventListener('click', handlePhotoRemove);
             document.getElementById('profileForm').addEventListener('submit', handleProfileSave);
+            document.getElementById('deleteAccountBtn').addEventListener('click', handleAccountDelete);
             
             // Close modal when clicking outside
             document.getElementById('profileModal').addEventListener('click', (e) => {
@@ -245,19 +290,33 @@
             const previewImage = document.getElementById('previewImage');
             const previewInitials = document.getElementById('previewInitials');
             const removeBtn = document.getElementById('removePhotoBtn');
+            const deleteBtn = document.getElementById('deleteAccountBtn');
+            const photoUploadSection = document.querySelector('.photo-upload-section');
             
             displayNameInput.value = currentUser.displayName || '';
             
-            if (currentUser.photoURL) {
-                previewImage.src = currentUser.photoURL;
-                previewImage.style.display = 'block';
-                previewInitials.style.display = 'none';
-                removeBtn.style.display = 'block';
-            } else {
+            // Hide photo upload for anonymous users
+            if (currentUser.isAnonymous) {
+                photoUploadSection.style.display = 'none';
+                deleteBtn.style.display = 'none';
                 previewImage.style.display = 'none';
                 previewInitials.style.display = 'flex';
-                previewInitials.textContent = getUserInitials(currentUser.displayName, currentUser.email);
-                removeBtn.style.display = 'none';
+                previewInitials.textContent = '👤';
+            } else {
+                photoUploadSection.style.display = 'block';
+                deleteBtn.style.display = 'block';
+                
+                if (currentUser.photoURL) {
+                    previewImage.src = currentUser.photoURL;
+                    previewImage.style.display = 'block';
+                    previewInitials.style.display = 'none';
+                    removeBtn.style.display = 'block';
+                } else {
+                    previewImage.style.display = 'none';
+                    previewInitials.style.display = 'flex';
+                    previewInitials.textContent = getUserInitials(currentUser.displayName, currentUser.email);
+                    removeBtn.style.display = 'none';
+                }
             }
         }
 
@@ -323,8 +382,8 @@
             try {
                 let photoURL = currentUser.photoURL || '';
                 
-                // Handle photo upload first
-                if (photoUpload.files[0]) {
+                // Handle photo upload first (only for non-anonymous users)
+                if (photoUpload.files[0] && !currentUser.isAnonymous) {
                     console.log('Uploading new photo...');
                     const uploadResult = await uploadProfilePhoto(currentUser.uid, photoUpload.files[0]);
                     if (uploadResult.success) {
@@ -333,7 +392,7 @@
                     } else {
                         throw new Error('Falha no upload da foto: ' + uploadResult.error);
                     }
-                } else if (document.getElementById('previewImage').style.display === 'none' && currentUser.photoURL) {
+                } else if (document.getElementById('previewImage').style.display === 'none' && currentUser.photoURL && !currentUser.isAnonymous) {
                     // Photo was removed
                     console.log('Removing photo...');
                     const deleteResult = await deleteProfilePhoto(currentUser.uid, currentUser.photoURL);
@@ -350,7 +409,7 @@
                 console.log('Updating profile...');
                 const updateData = {
                     displayName: displayName,
-                    photoURL: photoURL
+                    photoURL: currentUser.isAnonymous ? '' : photoURL
                 };
                 
                 const updateResult = await updateUserProfile(currentUser.uid, updateData);
@@ -373,6 +432,37 @@
             } finally {
                 saveBtn.disabled = false;
                 saveBtn.textContent = 'Salvar';
+            }
+        }
+
+        async function handleAccountDelete() {
+            if (!currentUser) return;
+            
+            const confirmMessage = currentUser.isAnonymous 
+                ? 'Tem certeza que deseja excluir sua conta anônima? Todos os seus dados serão perdidos permanentemente.'
+                : 'Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita e todos os seus dados serão perdidos permanentemente.';
+            
+            if (!confirm(confirmMessage)) {
+                return;
+            }
+            
+            const deleteBtn = document.getElementById('deleteAccountBtn');
+            deleteBtn.disabled = true;
+            deleteBtn.textContent = 'Excluindo...';
+            
+            try {
+                const result = await deleteUserAccount();
+                if (result.success) {
+                    alert('Conta excluída com sucesso.');
+                    // Auth state observer will handle redirect
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                alert('Erro ao excluir conta: ' + error.message);
+                deleteBtn.disabled = false;
+                deleteBtn.textContent = 'Excluir Conta';
             }
         }
     </script>

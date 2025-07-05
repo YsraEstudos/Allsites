@@ -5,183 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rastreador de Estudos - Meu Site de Tudo</title>
     <link rel="stylesheet" href="../estilo.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #000000;
-            color: #ffffff;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-        
-        .fade-in-up {
-            animation: fadeInUp 0.5s ease-in-out;
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .modal-enter {
-            animation: modal-enter-animation 0.3s ease-out;
-        }
-        @keyframes modal-enter-animation {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.3); }
-        
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 24px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 14px;
-        }
-
-        .back-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.2);
-            transform: translateX(-2px);
-        }
-        
-        .estudos-container {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-        
-        .form-input {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: #ffffff !important;
-            border-radius: 8px !important;
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-        }
-        
-        .form-input:focus {
-            outline: none !important;
-            border-color: #007AFF !important;
-            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2) !important;
-        }
-        
-        .btn-primary {
-            background: #007AFF !important;
-            border: none !important;
-            color: white !important;
-            font-weight: 500 !important;
-            border-radius: 8px !important;
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-        }
-        
-        .btn-primary:hover {
-            background: #0056CC !important;
-            transform: translateY(-1px) !important;
-        }
-        
-        .study-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .study-card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
-        
-        .study-card.completed {
-            border-color: #34C759;
-        }
-        
-        .exercise-marker {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            cursor: pointer;
-        }
-        
-        .exercise-marker:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.1);
-        }
-        
-        .exercise-marker.completed {
-            background: #007AFF;
-            border-color: #007AFF;
-        }
-        
-        .delete-btn {
-            color: rgba(255, 255, 255, 0.5);
-            transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            opacity: 0;
-            padding: 4px;
-            border-radius: 4px;
-        }
-        
-        .study-card:hover .delete-btn {
-            opacity: 1;
-        }
-        
-        .delete-btn:hover {
-            color: #FF3B30;
-            background: rgba(255, 59, 48, 0.1);
-        }
-        
-        .modal-backdrop {
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        
-        .modal-content {
-            background: rgba(28, 28, 30, 0.95);
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-        }
-    </style>
 </head>
-
-<body class="antialiased">
+<body>
     <header>
         <div class="container">
             <img src="../imagens/logo.png" alt="Logo do Site" class="logo">
-            <h1>Meu Site de Tudo</h1>
+            <h1>Rastreador de Estudos</h1>
             <nav>
                 <ul>
                     <li><a href="../index.html">Home</a></li>
@@ -201,7 +30,6 @@
                             <span class="user-email" id="userEmail"></span>
                         </div>
                         <div class="user-actions">
-                            <button id="profileBtn" class="profile-btn" title="Editar Perfil">⚙️</button>
                             <button id="logoutBtn" class="logout-btn">Sair</button>
                         </div>
                     </div>
@@ -213,235 +41,41 @@
         </div>
     </header>
 
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-        <div class="mb-6">
-            <a href="../index.html" class="back-link">
-                ← Voltar para Home
-            </a>
-        </div>
-        
-        <header class="text-center mb-8">
-            <h1 class="text-4xl md:text-5xl font-bold text-white">📚 Rastreador de Estudos</h1>
-            <p class="text-gray-400 mt-2">Adicione seus tópicos, links e marque seus 3 exercícios diários.</p>
-        </header>
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h2>📚 Rastreador de Estudos</h2>
+                <p>Em breve: Adicione tópicos de estudo e acompanhe seu progresso diário marcando exercícios por matéria.</p>
+            </section>
 
-        <section class="mb-8 estudos-container">
-            <h2 class="text-2xl font-semibold mb-4 text-white">Adicionar Novo Tópico de Estudo</h2>
-            <form id="add-study-form" class="space-y-4">
-                <input type="text" id="new-study-input" placeholder="Nome do Tópico (Ex: Álgebra Linear)" class="form-input w-full px-4 py-3" required>
-                <input type="url" id="new-study-link-input" placeholder="Link de referência (opcional)" class="form-input w-full px-4 py-3">
-                <button type="submit" class="btn-primary w-full py-3 px-6 font-bold">
-                    Adicionar Tópico
-                </button>
-            </form>
-        </section>
-
-        <main>
-            <h2 class="text-2xl font-semibold mb-4 text-white">Meus Estudos</h2>
-            <div id="study-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div id="loading-state" class="text-center col-span-full py-10">
-                    <p class="text-gray-400">Carregando seus estudos...</p>
+            <section class="coming-soon-section">
+                <div class="coming-soon-card">
+                    <h3>🚧 Em Desenvolvimento</h3>
+                    <p>Esta seção está sendo desenvolvida e será lançada em breve com as seguintes funcionalidades:</p>
+                    <ul>
+                        <li>📖 Adicionar matérias e tópicos de estudo</li>
+                        <li>✅ Marcar 3 exercícios diários por matéria</li>
+                        <li>📊 Visualizar progresso com gráficos</li>
+                        <li>🎯 Definir metas de estudo</li>
+                        <li>📅 Calendário de estudos</li>
+                        <li>🏆 Sistema de conquistas e streaks</li>
+                        <li>📈 Relatórios de desempenho</li>
+                        <li>⏰ Lembretes e notificações</li>
+                    </ul>
+                    <a href="../index.html" class="btn">← Voltar ao Início</a>
                 </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Modal de Confirmação de Exclusão -->
-    <div id="delete-confirm-modal" class="fixed inset-0 modal-backdrop flex items-center justify-center p-4 hidden z-50">
-        <div class="modal-content p-8 max-w-sm w-full">
-            <h2 class="text-xl font-bold mb-4 text-red-500">Confirmar Exclusão</h2>
-            <p class="text-gray-300 mb-6">Tem certeza que deseja excluir este tópico? Esta ação não pode ser desfeita.</p>
-            <div class="flex justify-end gap-4">
-                <button id="cancel-delete-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300">
-                    Cancelar
-                </button>
-                <button id="confirm-delete-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300">
-                    Excluir
-                </button>
-            </div>
+            </section>
         </div>
-    </div>
-    
-    <footer class="mt-12 text-center text-gray-500">
-        <div class="container mx-auto p-4">
+    </main>
+
+    <footer>
+        <div class="container">
             <p>&copy; 2025 Meu Site de Tudo. Todos os direitos reservados.</p>
         </div>
     </footer>
-    
-    <script>
-        // Simple local storage implementation
-        let studies = JSON.parse(localStorage.getItem('study-tracker-studies') || '[]');
-        let studyIdToDelete = null;
-
-        // UI Elements
-        const addStudyForm = document.getElementById('add-study-form');
-        const newStudyInput = document.getElementById('new-study-input');
-        const newStudyLinkInput = document.getElementById('new-study-link-input');
-        const studyList = document.getElementById('study-list');
-        const loadingState = document.getElementById('loading-state');
-        const deleteConfirmModal = document.getElementById('delete-confirm-modal');
-        const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
-        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
-
-        function getTodayDateString() {
-            const today = new Date();
-            const year = today.getFullYear();
-            const month = String(today.getMonth() + 1).padStart(2, '0');
-            const day = String(today.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        function saveData() {
-            localStorage.setItem('study-tracker-studies', JSON.stringify(studies));
-        }
-
-        function generateId() {
-            return 'study_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
-        }
-
-        function renderStudies() {
-            studyList.innerHTML = '';
-            
-            if (studies.length === 0) {
-                loadingState.innerHTML = '<p class="text-gray-400 col-span-full text-center py-10">Nenhum tópico adicionado. Comece adicionando um acima!</p>';
-                loadingState.style.display = 'block';
-            } else {
-                loadingState.style.display = 'none';
-                studies.forEach(study => {
-                    const today = getTodayDateString();
-                    const countToday = (study.progress && study.progress[today]) || 0;
-                    const isCompletedToday = countToday === 3;
-
-                    const card = document.createElement('div');
-                    card.className = `study-card group relative p-5 transition-all duration-300 fade-in-up ${isCompletedToday ? 'completed' : ''}`;
-                    card.setAttribute('data-id', study.id);
-
-                    let markersHTML = '';
-                    for (let i = 1; i <= 3; i++) {
-                        const isChecked = i <= countToday;
-                        markersHTML += `
-                            <button data-index="${i}" class="exercise-marker ${isChecked ? 'completed' : ''}">
-                                ${i}
-                            </button>
-                        `;
-                    }
-
-                    const linkButtonHTML = study.link 
-                        ? `<a href="${study.link}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-cyan-400 transition-colors duration-200" title="Abrir link de referência">
-                               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.72"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.72"></path></svg>
-                           </a>`
-                        : '';
-
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="flex items-center gap-2 flex-1 min-w-0">
-                                <h3 class="text-xl font-bold text-white truncate">${study.name}</h3>
-                                ${linkButtonHTML}
-                            </div>
-                            <button class="delete-btn">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                            </button>
-                        </div>
-                        <p class="text-sm text-gray-400 mb-4">Exercícios de hoje: <span class="font-bold text-white">${countToday}/3</span></p>
-                        <div class="flex items-center justify-start gap-3">
-                            ${markersHTML}
-                        </div>
-                    `;
-                    
-                    studyList.appendChild(card);
-                });
-            }
-        }
-
-        function showModal(modalElement) {
-            modalElement.classList.remove('hidden');
-            modalElement.firstElementChild.classList.add('modal-enter');
-        }
-
-        function hideModal(modalElement) {
-            modalElement.classList.add('hidden');
-            modalElement.firstElementChild.classList.remove('modal-enter');
-        }
-
-        // Event Listeners
-        addStudyForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const studyName = newStudyInput.value.trim();
-            const studyLink = newStudyLinkInput.value.trim();
-            
-            if (studyName) {
-                const newStudy = {
-                    id: generateId(),
-                    name: studyName,
-                    link: studyLink,
-                    progress: {},
-                    createdAt: new Date().toISOString()
-                };
-                
-                studies.push(newStudy);
-                saveData();
-                renderStudies();
-                addStudyForm.reset();
-            }
-        });
-
-        studyList.addEventListener('click', (e) => {
-            const card = e.target.closest('[data-id]');
-            if (!card) return;
-            const studyId = card.getAttribute('data-id');
-
-            if (e.target.closest('.delete-btn')) {
-                studyIdToDelete = studyId;
-                showModal(deleteConfirmModal);
-                return;
-            }
-
-            const marker = e.target.closest('.exercise-marker');
-            if (marker) {
-                const today = getTodayDateString();
-                const study = studies.find(s => s.id === studyId);
-                const currentCount = (study.progress && study.progress[today]) || 0;
-                const markerIndex = parseInt(marker.dataset.index, 10);
-                const newCount = currentCount === markerIndex ? markerIndex - 1 : markerIndex;
-                
-                if (!study.progress) study.progress = {};
-                study.progress[today] = newCount;
-                
-                saveData();
-                renderStudies();
-            }
-        });
-
-        confirmDeleteBtn.addEventListener('click', () => {
-            if (studyIdToDelete) {
-                studies = studies.filter(study => study.id !== studyIdToDelete);
-                saveData();
-                renderStudies();
-                studyIdToDelete = null;
-                hideModal(deleteConfirmModal);
-            }
-        });
-
-        cancelDeleteBtn.addEventListener('click', () => {
-            studyIdToDelete = null;
-            hideModal(deleteConfirmModal);
-        });
-
-        deleteConfirmModal.addEventListener('click', (e) => {
-            if (e.target === deleteConfirmModal) {
-                studyIdToDelete = null;
-                hideModal(deleteConfirmModal);
-            }
-        });
-
-        // Initialize
-        setTimeout(() => {
-            renderStudies();
-        }, 500);
-    </script>
 
     <script type="module">
-        import { onAuthStateChange, logoutUser, getUserProfile, updateUserProfile, uploadProfilePhoto, deleteProfilePhoto, getUserInitials } from '../meu-site-de-tudo/firebase-config.js';
+        import { onAuthStateChange, logoutUser, getUserInitials } from '../firebase-config.js';
 
         const userInfo = document.getElementById('userInfo');
         const loginPrompt = document.getElementById('loginPrompt');
@@ -451,19 +85,28 @@
         const profileImage = document.getElementById('profileImage');
         const profileInitials = document.getElementById('profileInitials');
         const logoutBtn = document.getElementById('logoutBtn');
-        const profileBtn = document.getElementById('profileBtn');
-
-        let currentUserProfile = null;
 
         // Auth state observer
         onAuthStateChange(async (user) => {
-            currentUserProfile = user;
             if (user) {
                 // User is signed in
-                userEmail.textContent = user.email;
+                userEmail.textContent = user.email || 'Usuário Anônimo';
                 
-                // Load user profile
-                await loadUserProfile(user);
+                if (user.isAnonymous) {
+                    userName.textContent = 'Usuário Anônimo';
+                    profileInitials.textContent = '👤';
+                } else {
+                    userName.textContent = user.displayName || user.email.split('@')[0];
+                    if (user.photoURL) {
+                        profileImage.src = user.photoURL;
+                        profileImage.style.display = 'block';
+                        profileInitials.style.display = 'none';
+                    } else {
+                        profileImage.style.display = 'none';
+                        profileInitials.style.display = 'flex';
+                        profileInitials.textContent = getUserInitials(user.displayName, user.email);
+                    }
+                }
                 
                 userInfo.style.display = 'flex';
                 loginPrompt.style.display = 'none';
@@ -472,39 +115,6 @@
                 window.location.href = '../auth/login.html';
             }
         });
-
-        async function loadUserProfile(user) {
-            try {
-                const result = await getUserProfile(user.uid);
-                let profile = result.success ? result.profile : {};
-                
-                // Use Firebase Auth data as fallback
-                const displayName = profile.displayName || user.displayName || '';
-                const photoURL = profile.photoURL || user.photoURL || '';
-                
-                // Update display name
-                userName.textContent = displayName || user.email.split('@')[0];
-                
-                // Update profile photo
-                if (photoURL) {
-                    profileImage.src = photoURL;
-                    profileImage.style.display = 'block';
-                    profileInitials.style.display = 'none';
-                } else {
-                    profileImage.style.display = 'none';
-                    profileInitials.style.display = 'flex';
-                    profileInitials.textContent = getUserInitials(displayName, user.email);
-                }
-                
-            } catch (error) {
-                console.error('Error loading profile:', error);
-                // Use fallback values
-                userName.textContent = user.email.split('@')[0];
-                profileImage.style.display = 'none';
-                profileInitials.style.display = 'flex';
-                profileInitials.textContent = getUserInitials('', user.email);
-            }
-        }
 
         // Logout handler
         logoutBtn.addEventListener('click', async () => {
@@ -515,192 +125,51 @@
                 console.error('Error signing out:', error);
             }
         });
-
-        // Profile modal functionality
-        profileBtn.addEventListener('click', () => {
-            if (currentUserProfile) {
-                showProfileModal();
-            }
-        });
-
-        function showProfileModal() {
-            // Create profile modal if it doesn't exist
-            if (!document.getElementById('profileModal')) {
-                createProfileModal();
-            }
-            
-            const modal = document.getElementById('profileModal');
-            populateProfileModal();
-            modal.classList.add('active');
-        }
-
-        function createProfileModal() {
-            const modalHTML = `
-                <div id="profileModal" class="profile-modal">
-                    <div class="profile-modal-content">
-                        <div class="profile-modal-header">
-                            <h3 class="profile-modal-title">Editar Perfil</h3>
-                            <button class="profile-modal-close" id="closeProfileModal">×</button>
-                        </div>
-                        
-                        <form class="profile-form" id="profileForm">
-                            <div class="profile-photo-section">
-                                <div class="profile-photo-preview" id="photoPreview">
-                                    <img id="previewImage" style="display: none;" alt="Preview">
-                                    <div class="profile-initials" id="previewInitials"></div>
-                                </div>
-                                
-                                <div class="photo-upload-section">
-                                    <input type="file" id="photoUpload" class="photo-upload-input" accept="image/*">
-                                    <button type="button" class="photo-upload-btn" id="uploadBtn">Escolher Foto</button>
-                                    <button type="button" class="photo-remove-btn" id="removePhotoBtn" style="display: none;">Remover Foto</button>
-                                </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="profileDisplayName">Nome</label>
-                                <input type="text" id="profileDisplayName" placeholder="Seu nome completo">
-                            </div>
-                            
-                            <div class="profile-modal-actions">
-                                <button type="button" class="profile-cancel-btn" id="cancelProfileBtn">Cancelar</button>
-                                <button type="submit" class="profile-save-btn" id="saveProfileBtn">Salvar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            `;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
-            // Add event listeners
-            document.getElementById('closeProfileModal').addEventListener('click', hideProfileModal);
-            document.getElementById('cancelProfileBtn').addEventListener('click', hideProfileModal);
-            document.getElementById('uploadBtn').addEventListener('click', () => {
-                document.getElementById('photoUpload').click();
-            });
-            document.getElementById('photoUpload').addEventListener('change', handlePhotoUpload);
-            document.getElementById('removePhotoBtn').addEventListener('click', handlePhotoRemove);
-            document.getElementById('profileForm').addEventListener('submit', handleProfileSave);
-            
-            // Close modal when clicking outside
-            document.getElementById('profileModal').addEventListener('click', (e) => {
-                if (e.target.id === 'profileModal') {
-                    hideProfileModal();
-                }
-            });
-        }
-
-        function populateProfileModal() {
-            if (!currentUserProfile) return;
-            
-            const displayNameInput = document.getElementById('profileDisplayName');
-            const previewImage = document.getElementById('previewImage');
-            const previewInitials = document.getElementById('previewInitials');
-            const removeBtn = document.getElementById('removePhotoBtn');
-            
-            displayNameInput.value = currentUserProfile.displayName || '';
-            
-            if (currentUserProfile.photoURL) {
-                previewImage.src = currentUserProfile.photoURL;
-                previewImage.style.display = 'block';
-                previewInitials.style.display = 'none';
-                removeBtn.style.display = 'block';
-            } else {
-                previewImage.style.display = 'none';
-                previewInitials.style.display = 'flex';
-                previewInitials.textContent = getUserInitials(currentUserProfile.displayName, currentUserProfile.email);
-                removeBtn.style.display = 'none';
-            }
-        }
-
-        function hideProfileModal() {
-            const modal = document.getElementById('profileModal');
-            if (modal) {
-                modal.classList.remove('active');
-            }
-        }
-
-        function handlePhotoUpload(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const previewImage = document.getElementById('previewImage');
-                    const previewInitials = document.getElementById('previewInitials');
-                    const removeBtn = document.getElementById('removePhotoBtn');
-                    
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = 'block';
-                    previewInitials.style.display = 'none';
-                    removeBtn.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function handlePhotoRemove() {
-            const previewImage = document.getElementById('previewImage');
-            const previewInitials = document.getElementById('previewInitials');
-            const removeBtn = document.getElementById('removePhotoBtn');
-            const photoUpload = document.getElementById('photoUpload');
-            
-            previewImage.style.display = 'none';
-            previewInitials.style.display = 'flex';
-            removeBtn.style.display = 'none';
-            photoUpload.value = '';
-            
-            const displayName = document.getElementById('profileDisplayName').value;
-            previewInitials.textContent = getUserInitials(displayName, currentUserProfile.email);
-        }
-
-        async function handleProfileSave(e) {
-            e.preventDefault();
-            
-            if (!currentUserProfile) return;
-            
-            const saveBtn = document.getElementById('saveProfileBtn');
-            const displayName = document.getElementById('profileDisplayName').value.trim();
-            const photoUpload = document.getElementById('photoUpload');
-            
-            saveBtn.disabled = true;
-            saveBtn.textContent = 'Salvando...';
-            
-            try {
-                let photoURL = currentUserProfile.photoURL;
-                
-                // Handle photo upload
-                if (photoUpload.files[0]) {
-                    const uploadResult = await uploadProfilePhoto(currentUserProfile.uid, photoUpload.files[0]);
-                    if (uploadResult.success) {
-                        photoURL = uploadResult.photoURL;
-                    }
-                } else if (document.getElementById('previewImage').style.display === 'none' && currentUserProfile.photoURL) {
-                    // Photo was removed
-                    await deleteProfilePhoto(currentUserProfile.uid, currentUserProfile.photoURL);
-                    photoURL = '';
-                }
-                
-                // Update profile
-                const updateData = {
-                    displayName: displayName,
-                    photoURL: photoURL
-                };
-                
-                await updateUserProfile(currentUserProfile.uid, updateData);
-                
-                // Reload profile in main page
-                await loadUserProfile(currentUserProfile);
-                
-                hideProfileModal();
-            } catch (error) {
-                console.error('Error saving profile:', error);
-                alert('Erro ao salvar perfil. Tente novamente.');
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = 'Salvar';
-            }
-        }
     </script>
+
+    <style>
+        .coming-soon-section {
+            margin: 40px 0;
+        }
+
+        .coming-soon-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .coming-soon-card h3 {
+            color: #ffffff;
+            font-size: 1.5rem;
+            margin-bottom: 16px;
+        }
+
+        .coming-soon-card p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 24px;
+        }
+
+        .coming-soon-card ul {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            max-width: 500px;
+            margin: 0 auto 32px;
+        }
+
+        .coming-soon-card li {
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .coming-soon-card li:last-child {
+            border-bottom: none;
+        }
+    </style>
 </body>
 </html>

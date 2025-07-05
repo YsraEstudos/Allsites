@@ -6,122 +6,144 @@
     <title>Login - Meu Site de Tudo</title>
     <link rel="stylesheet" href="../estilo.css">
     <style>
-        .auth-container {
+        .login-container {
+            min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 120px);
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
             padding: 20px;
         }
 
-        .auth-card {
+        .login-card {
             background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 40px;
-            width: 100%;
             max-width: 400px;
-            backdrop-filter: blur(10px);
-        }
-
-        .auth-title {
+            width: 100%;
             text-align: center;
-            color: white;
-            font-size: 24px;
-            font-weight: 300;
-            margin-bottom: 30px;
         }
 
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .form-group label {
-            color: #ccc;
-            font-size: 14px;
-            font-weight: 300;
-        }
-
-        .form-group input {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: white;
-            padding: 12px 16px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .form-group input::placeholder {
-            color: #666;
-        }
-
-        .auth-button {
+        .login-logo {
+            width: 80px;
+            height: 80px;
             background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .login-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 14px 20px;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
             color: white;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 300;
-            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
             transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .auth-button:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .auth-button:active {
-            transform: scale(0.98);
-        }
-
-        .auth-switch {
-            text-align: center;
-            margin-top: 20px;
-            color: #ccc;
-            font-size: 14px;
-        }
-
-        .auth-switch button {
-            background: none;
-            border: none;
-            color: white;
-            text-decoration: underline;
             cursor: pointer;
-            font-size: 14px;
+            font-family: inherit;
         }
 
-        .auth-switch button:hover {
-            color: #ddd;
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
         }
 
-        .error-message {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            border-radius: 8px;
-            color: #ff6b6b;
-            padding: 12px;
-            font-size: 14px;
-            margin-bottom: 20px;
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .google-btn {
+            background: #4285f4;
+            border-color: #4285f4;
+        }
+
+        .google-btn:hover {
+            background: #3367d6;
+            border-color: #3367d6;
+        }
+
+        .anonymous-btn {
+            background: rgba(128, 128, 128, 0.2);
+            border-color: rgba(128, 128, 128, 0.3);
+        }
+
+        .anonymous-btn:hover {
+            background: rgba(128, 128, 128, 0.3);
+            border-color: rgba(128, 128, 128, 0.4);
+        }
+
+        .login-divider {
+            position: relative;
+            margin: 24px 0;
             text-align: center;
+        }
+
+        .login-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .login-divider span {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 0 16px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+        }
+
+        .login-footer {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .back-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: white;
         }
 
         .loading {
@@ -129,71 +151,74 @@
             pointer-events: none;
         }
 
-        .home-link {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
+        .error-message {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            color: #ff6b6b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
             font-size: 14px;
-            transition: color 0.3s ease;
+            display: none;
         }
 
-        .home-link:hover {
-            color: white;
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 24px;
+                margin: 0 16px;
+            }
+            
+            .login-title {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="../index.html" class="home-link">← Voltar para Home</a>
-    
-    <div class="auth-container">
-        <div class="auth-card">
-            <h1 class="auth-title" id="authTitle">Entrar</h1>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-logo">🏠</div>
             
-            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <h1 class="login-title">Bem-vindo</h1>
+            <p class="login-subtitle">Faça login para acessar suas funcionalidades</p>
             
-            <form class="auth-form" id="authForm">
-                <div class="form-group" id="nameGroup" style="display: none;">
-                    <label for="displayName">Nome</label>
-                    <input type="text" id="displayName" name="displayName" placeholder="Seu nome completo">
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div class="login-options">
+                <button class="login-btn google-btn" id="googleSignIn">
+                    <svg width="18" height="18" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continuar com Google
+                </button>
+                
+                <div class="login-divider">
+                    <span>ou</span>
                 </div>
                 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="seu@email.com" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="password">Senha</label>
-                    <input type="password" id="password" name="password" placeholder="Sua senha" required>
-                </div>
-                
-                <button type="submit" class="auth-button" id="authButton">Entrar</button>
-            </form>
+                <button class="login-btn anonymous-btn" id="anonymousSignIn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    Entrar como Visitante
+                </button>
+            </div>
             
-            <div class="auth-switch">
-                <span id="switchText">Não tem uma conta?</span>
-                <button type="button" id="switchMode">Cadastrar</button>
+            <div class="login-footer">
+                <a href="../index.html" class="back-link">← Voltar ao início</a>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { loginUser, registerUser, onAuthStateChange } from '../meu-site-de-tudo/firebase-config.js';
+        import { signInWithGoogle, signInAnonymouslyFunc, onAuthStateChange } from '../firebase-config.js';
 
-        let isLoginMode = true;
-        
-        const authTitle = document.getElementById('authTitle');
-        const authButton = document.getElementById('authButton');
-        const switchText = document.getElementById('switchText');
-        const switchMode = document.getElementById('switchMode');
-        const authForm = document.getElementById('authForm');
+        const googleSignInBtn = document.getElementById('googleSignIn');
+        const anonymousSignInBtn = document.getElementById('anonymousSignIn');
         const errorMessage = document.getElementById('errorMessage');
-        const emailInput = document.getElementById('email');
-        const passwordInput = document.getElementById('password');
-        const displayNameInput = document.getElementById('displayName');
-        const nameGroup = document.getElementById('nameGroup');
 
         // Check if user is already authenticated
         onAuthStateChange((user) => {
@@ -202,28 +227,6 @@
                 window.location.href = '../index.html';
             }
         });
-
-        function toggleMode() {
-            isLoginMode = !isLoginMode;
-            
-            if (isLoginMode) {
-                authTitle.textContent = 'Entrar';
-                authButton.textContent = 'Entrar';
-                switchText.textContent = 'Não tem uma conta?';
-                switchMode.textContent = 'Cadastrar';
-                nameGroup.style.display = 'none';
-                displayNameInput.required = false;
-            } else {
-                authTitle.textContent = 'Cadastrar';
-                authButton.textContent = 'Cadastrar';
-                switchText.textContent = 'Já tem uma conta?';
-                switchMode.textContent = 'Entrar';
-                nameGroup.style.display = 'block';
-                displayNameInput.required = true;
-            }
-            
-            hideError();
-        }
 
         function showError(message) {
             errorMessage.textContent = message;
@@ -234,78 +237,71 @@
             errorMessage.style.display = 'none';
         }
 
-        function setLoading(loading) {
-            const card = document.querySelector('.auth-card');
-            if (loading) {
-                card.classList.add('loading');
-                authButton.disabled = true; // Desabilitar o botão
-                authButton.textContent = 'Carregando...';
-            } else {
-                card.classList.remove('loading');
-                authButton.disabled = false; // Habilitar o botão
-                authButton.textContent = isLoginMode ? 'Entrar' : 'Cadastrar';
-            }
+        function setLoading(isLoading) {
+            const buttons = [googleSignInBtn, anonymousSignInBtn];
+            buttons.forEach(btn => {
+                if (isLoading) {
+                    btn.classList.add('loading');
+                    btn.disabled = true;
+                } else {
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                }
+            });
         }
 
-        switchMode.addEventListener('click', toggleMode);
-
-        authForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = emailInput.value.trim();
-            const password = passwordInput.value;
-            const displayName = displayNameInput.value.trim();
-            
-            if (!email || !password) {
-                showError('Por favor, preencha todos os campos.');
-                return;
-            }
-
-            if (!isLoginMode && !displayName) {
-                showError('Por favor, informe seu nome.');
-                return;
-            }
-
-            if (password.length < 6) {
-                showError('A senha deve ter pelo menos 6 caracteres.');
-                return;
-            }
-
+        // Google Sign In
+        googleSignInBtn.addEventListener('click', async () => {
             hideError();
             setLoading(true);
-
+            
             try {
-                const result = isLoginMode 
-                    ? await loginUser(email, password)
-                    : await registerUser(email, password, displayName);
-
+                const result = await signInWithGoogle();
+                
                 if (result.success) {
-                    // Success will be handled by the auth state observer
-                    // which will redirect to home page
+                    // Redirect will happen via auth state observer
+                    console.log('Google sign-in successful');
                 } else {
-                    let errorText = result.error;
-                    
-                    // Translate common Firebase errors to Portuguese
-                    if (errorText.includes('user-not-found')) {
-                        errorText = 'Usuário não encontrado.';
-                    } else if (errorText.includes('wrong-password')) {
-                        errorText = 'Senha incorreta.';
-                    } else if (errorText.includes('email-already-in-use')) {
-                        errorText = 'Este email já está em uso.';
-                    } else if (errorText.includes('weak-password')) {
-                        errorText = 'A senha é muito fraca.';
-                    } else if (errorText.includes('invalid-email')) {
-                        errorText = 'Email inválido.';
-                    } else if (errorText.includes('too-many-requests')) {
-                        errorText = 'Muitas tentativas. Tente novamente mais tarde.';
-                    }
-                    
-                    showError(errorText);
+                    showError(result.error || 'Erro ao fazer login com Google');
                 }
             } catch (error) {
-                showError('Erro interno. Tente novamente.');
+                console.error('Google sign-in error:', error);
+                showError('Erro inesperado ao fazer login com Google');
             } finally {
                 setLoading(false);
+            }
+        });
+
+        // Anonymous Sign In
+        anonymousSignInBtn.addEventListener('click', async () => {
+            hideError();
+            setLoading(true);
+            
+            try {
+                const result = await signInAnonymouslyFunc();
+                
+                if (result.success) {
+                    // Redirect will happen via auth state observer
+                    console.log('Anonymous sign-in successful');
+                } else {
+                    showError(result.error || 'Erro ao entrar como visitante');
+                }
+            } catch (error) {
+                console.error('Anonymous sign-in error:', error);
+                showError('Erro inesperado ao entrar como visitante');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Handle keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                if (document.activeElement === googleSignInBtn) {
+                    googleSignInBtn.click();
+                } else if (document.activeElement === anonymousSignInBtn) {
+                    anonymousSignInBtn.click();
+                }
             }
         });
     </script>
