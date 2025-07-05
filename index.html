@@ -1,27 +1,8 @@
-<!DOC    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self'; 
-        script-src 'self' https://www.gstatic.com; 
-        style-src 'self' 'unsafe-inline'; 
-        img-src 'self' data: https:; 
-        connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com; 
-        frame-src 'none'; 
-        object-src 'none';">\l>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self'; 
-        script-src 'self' 'unsafe-inline' https://www.gstatic.com; 
-        style-src 'self' 'unsafe-inline'; 
-        img-src 'self' data: https:; 
-        connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com; 
-        frame-src 'none'; 
-        object-src 'none';">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Meu Site de Tudo - Home</title>
     <link rel="stylesheet" href="estilo.css">
 </head>
@@ -30,23 +11,6 @@
         <div class="container">
             <h1>Meu Site de Tudo</h1>
             <div class="auth-section" id="authSection">
-                <div class="user-info hidden" id="userInfo">
-                    <div class="user-profile">
-                        <div class="profile-photo" id="profilePhoto">
-                            <img id="profileImage" class="hidden" alt="Foto do perfil">
-                            <div class="profile-initials" id="profileInitials"></div>
-                        </div>
-                        <div class="user-details">
-                            <span class="user-name" id="userName"></span>
-                            <span class="user-email" id="userEmail"></span>
-                        </div>
-                        <div class="user-actions">
-                            <button id="profileBtn" class="profile-btn" title="Editar Perfil">⚙️</button>
-                            <button id="linkAccountBtn" class="link-account-btn hidden" title="Vincular Conta Google">🔗</button>
-                            <button id="logoutBtn" class="logout-btn">Sair</button>
-                        </div>
-                    </div>
-                </div>
                 <div class="login-prompt" id="loginPrompt">
                     <a href="auth/login.html" class="login-link">Entrar</a>
                 </div>
@@ -55,42 +19,7 @@
     </header>
 
     <main>
-        <div class="container">
-            <section class="hero">
-                <h2>Bem-vindo ao Meu Site de Tudo</h2>
-                <p>Um espaço minimalista para organizar e descobrir conteúdos interessantes.</p>
-            </section>
-
-            <section class="sections">
-                <h3>Seções Disponíveis</h3>
-                <div class="section-cards">
-                    <div class="card">
-                        <h4>🎬 Hub Organizador do YouTube</h4>
-                        <p>Organize, anote e gerencie seus vídeos e canais favoritos do YouTube com categorias personalizadas</p>
-                        <a href="https://youtube-hub.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn">Acessar Hub</a>
-                    </div>
-
-                    <div class="card">
-                        <h4>📚 Rastreador de Estudos</h4>
-                        <p>Adicione tópicos de estudo e acompanhe seu progresso diário marcando 3 exercícios por matéria</p>
-                        <a href="https://study-tracker.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn">Acessar Rastreador</a>
-                    </div>
-
-                    <div class="card">
-                        <h4>🎯 Desafio 67 Dias</h4>
-                        <p>Transforme sua vida em 67 dias com hábitos consistentes e acompanhamento diário</p>
-                        <a href="https://66dias.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn">Acessar Desafio</a>
-                    </div>
-                    
-                    <!-- Espaço para futuras seções -->
-                    <div class="card coming-soon">
-                        <h4>✨ Mais Funcionalidades</h4>
-                        <p>Novas ferramentas e recursos serão adicionados em breve.</p>
-                        <span class="btn disabled">Em Breve</span>
-                    </div>
-                </div>
-            </section>
-        </div>
+        
     </main>
 
     <footer>
