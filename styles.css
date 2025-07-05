@@ -10,20 +10,20 @@
     --bg-primary: #000000;
     --bg-secondary: #0d0d0d;
     --bg-surface: #1a1a1a;
-    --bg-glass: rgba(187, 134, 252, 0.03);
+    --bg-glass: rgba(255, 255, 255, 0.03);
     --text-primary: #ffffff;
-    --text-secondary: #b39ddb;
-    --accent: #bb86fc;
-    --accent-variant: #6200ea;
-    --accent-glow: rgba(187, 134, 252, 0.4);
-    --surface-variant: #2d1b52;
-    --outline: #4a148c;
+    --text-secondary: #cccccc;
+    --accent: #ffffff;
+    --accent-variant: #cccccc;
+    --accent-glow: rgba(255, 255, 255, 0.4);
+    --surface-variant: #2a2a2a;
+    --outline: #404040;
     --error: #cf6679;
     
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, #bb86fc 0%, #6200ea 100%);
+    --gradient-primary: linear-gradient(135deg, #ffffff 0%, #cccccc 100%);
     --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-    --gradient-hover: linear-gradient(145deg, rgba(187,134,252,0.1) 0%, rgba(98,0,234,0.1) 100%);
+    --gradient-hover: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
     
     /* Typography */
     --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -43,8 +43,8 @@
     --elevation-2: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --elevation-3: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     --elevation-4: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    --glow-accent: 0 0 20px rgba(187, 134, 252, 0.3);
-    --glow-hover: 0 0 30px rgba(187, 134, 252, 0.5);
+    --glow-accent: 0 0 20px rgba(255, 255, 255, 0.3);
+    --glow-hover: 0 0 30px rgba(255, 255, 255, 0.5);
     
     /* Border Radius */
     --radius-sm: 8px;
@@ -56,7 +56,7 @@
 
 body {
     font-family: var(--font-family);
-    background: linear-gradient(135deg, #000000 0%, #1a0a2e 50%, #000000 100%);
+    background: #000000;
     color: var(--text-primary);
     line-height: 1.6;
     font-size: var(--font-size-body);
@@ -73,9 +73,9 @@ body::before {
     width: 100%;
     height: 100%;
     background: 
-        radial-gradient(circle at 20% 80%, rgba(187, 134, 252, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(98, 0, 234, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(187, 134, 252, 0.05) 0%, transparent 50%);
+        radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.02) 0%, transparent 50%);
     z-index: -1;
     animation: backgroundMove 20s ease-in-out infinite;
 }
@@ -87,9 +87,9 @@ body::before {
 
 /* Header */
 .header {
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(187, 134, 252, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -120,11 +120,7 @@ body::before {
     font-size: 28px;
     font-weight: 600;
     color: var(--text-primary);
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 30px rgba(187, 134, 252, 0.3);
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
     letter-spacing: 1px;
 }
 
@@ -146,18 +142,15 @@ body::before {
     font-size: clamp(32px, 5vw, 48px);
     font-weight: 700;
     margin-bottom: var(--spacing-lg);
-    background: linear-gradient(135deg, #ffffff 0%, #bb86fc 30%, #d1c4e9 70%, #ffffff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    text-shadow: 0 0 40px rgba(187, 134, 252, 0.5);
+    color: var(--text-primary);
+    text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
     letter-spacing: -0.5px;
     animation: titleGlow 3s ease-in-out infinite alternate;
 }
 
 @keyframes titleGlow {
-    0% { filter: drop-shadow(0 0 10px rgba(187, 134, 252, 0.3)); }
-    100% { filter: drop-shadow(0 0 20px rgba(187, 134, 252, 0.6)); }
+    0% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3)); }
+    100% { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6)); }
 }
 
 .hero-subtitle {
@@ -181,17 +174,17 @@ body::before {
 /* Tool Cards */
 .tool-card {
     background: linear-gradient(145deg, 
-        rgba(187, 134, 252, 0.08) 0%, 
-        rgba(98, 0, 234, 0.05) 50%,
+        rgba(255, 255, 255, 0.05) 0%, 
+        rgba(255, 255, 255, 0.02) 50%,
         rgba(0, 0, 0, 0.8) 100%);
     backdrop-filter: blur(20px);
     border-radius: var(--radius-xl);
     padding: var(--spacing-xl);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(187, 134, 252, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
     overflow: hidden;
-    box-shadow: var(--elevation-2), 0 0 20px rgba(187, 134, 252, 0.1);
+    box-shadow: var(--elevation-2), 0 0 20px rgba(255, 255, 255, 0.05);
 }
 
 .tool-card::before {
@@ -293,15 +286,15 @@ body::before {
     transition: all 0.3s ease;
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
-    background: rgba(187, 134, 252, 0.1);
-    border: 1px solid rgba(187, 134, 252, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .tool-link:hover {
-    background: rgba(187, 134, 252, 0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-color: var(--accent);
     transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(187, 134, 252, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
 .tool-link .arrow {
@@ -319,7 +312,7 @@ body::before {
     top: var(--spacing-lg);
     right: var(--spacing-lg);
     background: linear-gradient(135deg, var(--accent-variant), var(--accent));
-    color: white;
+    color: black;
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     font-size: 12px;
@@ -347,7 +340,7 @@ body::before {
     background: linear-gradient(45deg, var(--accent), transparent);
     border-radius: 50%;
     animation: float 15s infinite linear;
-    opacity: 0.3;
+    opacity: 0.1;
 }
 
 .particle:nth-child(1) {
@@ -386,10 +379,10 @@ body::before {
         opacity: 0;
     }
     10% {
-        opacity: 0.3;
+        opacity: 0.1;
     }
     90% {
-        opacity: 0.3;
+        opacity: 0.1;
     }
     100% {
         transform: translateY(-100vh) rotate(360deg);
@@ -471,12 +464,12 @@ body::before {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, #d2a8ff, var(--accent));
+    background: linear-gradient(180deg, #ffffff, var(--accent));
 }
 
 /* Loading States */
 .loading-shimmer {
-    background: linear-gradient(90deg, transparent, rgba(187, 134, 252, 0.1), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     background-size: 200% 100%;
     animation: shimmerLoad 1.5s infinite;
 }
