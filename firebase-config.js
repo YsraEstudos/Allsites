@@ -154,40 +154,6 @@ export const updateUserProfile = async (uid, profileData) => {
 };
 
 // --- Profile Photo Management ---
-export async function uploadProfilePhoto(userId, file) {
-    if (!userId || !file) {
-        return { success: false, error: 'User ID and file are required' };
-    }
-    
-    const storage = getStorage();
-    const storageRef = ref(storage, `profile-photos/${userId}/${file.name}`);
-    
-    try {
-        // 1. Upload the file and wait for it to complete
-        const snapshot = await uploadBytes(storageRef, file);
-        
-        // 2. Get the download URL from the snapshot reference
-        const photoURL = await getDownloadURL(snapshot.ref);
-        
-        return { success: true, photoURL: photoURL };
-        
-    } catch (error) {
-        console.error("Error uploading photo:", error);
-        
-        // Provide more specific error feedback
-        let errorMessage = 'Ocorreu um erro desconhecido.';
-        if (error.code === 'storage/unauthorized') {
-            errorMessage = 'Você não tem permissão para fazer o upload. Verifique as regras de segurança do Firebase Storage.';
-        } else if (error.code === 'storage/canceled') {
-            errorMessage = 'O upload foi cancelado.';
-        } else if (error.code === 'storage/object-not-found') {
-            errorMessage = 'O arquivo não foi encontrado.';
-        }
-        
-        return { success: false, error: errorMessage };
-    }
-}
-
 export async function deleteProfilePhoto(userId, photoURL) {
     try {
         if (!photoURL) {
