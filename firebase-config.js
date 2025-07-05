@@ -22,8 +22,6 @@ import {
 import { 
     getStorage, 
     ref, 
-    uploadBytes, 
-    getDownloadURL, 
     deleteObject 
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js';
 
@@ -153,7 +151,6 @@ export const updateUserProfile = async (uid, profileData) => {
     }
 };
 
-// --- Profile Photo Management ---
 export async function deleteProfilePhoto(userId, photoURL) {
     try {
         if (!photoURL) {
