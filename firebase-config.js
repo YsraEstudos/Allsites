@@ -32,7 +32,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyDA51YgCq7UAxljlIuAUcgrHhqS8hXbTHQ",
     authDomain: "allsites-49962.firebaseapp.com",
     projectId: "allsites-49962",
-    storageBucket: "allsites-49962.firebasestorage.app",
+    storageBucket: "allsites-49962.appspot.com", // Corrigido aqui
     messagingSenderId: "712864304203",
     appId: "1:712864304203:web:656a21e65dd7e1cc3f91ce",
     measurementId: "G-02DP7Q50XB"
