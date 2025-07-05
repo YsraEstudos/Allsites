@@ -81,7 +81,7 @@
     </footer>
 
     <script type="module">
-        import { onAuthStateChange, logoutUser, getUserProfile, updateUserProfile, uploadProfilePhoto, deleteProfilePhoto, getUserInitials, deleteUserAccount, linkAnonymousAccount, signInWithGoogle } from './firebase-config.js';
+        import { onAuthStateChange, logoutUser, getUserProfile, updateUserProfile, deleteProfilePhoto, getUserInitials, deleteUserAccount, linkAnonymousAccount, signInWithGoogle } from './firebase-config.js';
 
         const userInfo = document.getElementById('userInfo');
         const loginPrompt = document.getElementById('loginPrompt');
@@ -392,44 +392,15 @@
             
             const saveBtn = document.getElementById('saveProfileBtn');
             const displayName = document.getElementById('profileDisplayName').value.trim();
-            const photoUpload = document.getElementById('photoUpload');
             
             saveBtn.disabled = true;
             saveBtn.textContent = 'Salvando...';
             
             try {
-                let photoURL = currentUser.photoURL || '';
-                
-                // Handle photo upload first (only for non-anonymous users)
-                if (photoUpload.files[0] && !currentUser.isAnonymous) {
-                    saveBtn.textContent = 'Fazendo upload da foto...';
-                    
-                    const uploadResult = await uploadProfilePhoto(currentUser.uid, photoUpload.files[0]);
-                    if (uploadResult.success) {
-                        photoURL = uploadResult.photoURL;
-                        saveBtn.textContent = 'Salvando perfil...';
-                    } else {
-                        throw new Error('Falha no upload da foto: ' + uploadResult.error);
-                    }
-                } else if (document.getElementById('previewImage').style.display === 'none' && currentUser.photoURL && !currentUser.isAnonymous) {
-                    // Photo was removed
-                    saveBtn.textContent = 'Removendo foto...';
-                    
-                    const deleteResult = await deleteProfilePhoto(currentUser.uid, currentUser.photoURL);
-                    if (deleteResult.success) {
-                        photoURL = '';
-                        saveBtn.textContent = 'Salvando perfil...';
-                    } else {
-                        console.warn('Failed to delete photo, but continuing:', deleteResult.error);
-                        photoURL = '';
-                        saveBtn.textContent = 'Salvando perfil...';
-                    }
-                }
-                
-                // Update profile with all data
+                // Update profile with display name only
                 const updateData = {
                     displayName: displayName,
-                    photoURL: currentUser.isAnonymous ? '' : photoURL
+                    photoURL: currentUser.isAnonymous ? '' : (currentUser.photoURL || '')
                 };
                 
                 const updateResult = await updateUserProfile(currentUser.uid, updateData);
