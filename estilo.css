@@ -554,6 +554,27 @@ footer {
     border-color: rgba(255, 0, 0, 0.5);
 }
 
+.anonymous-photo-message {
+    text-align: center;
+    padding: 16px;
+    background: rgba(255, 193, 7, 0.1);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+.anonymous-photo-message p {
+    color: #ffc107;
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.anonymous-photo-message small {
+    color: rgba(255, 193, 7, 0.8);
+    font-size: 12px;
+}
+
 .profile-modal-actions {
     display: flex;
     gap: 10px;

@@ -244,6 +244,10 @@
                                     <input type="file" id="photoUpload" class="photo-upload-input" accept="image/*">
                                     <button type="button" class="photo-upload-btn" id="uploadBtn">Escolher Foto</button>
                                     <button type="button" class="photo-remove-btn" id="removePhotoBtn" style="display: none;">Remover Foto</button>
+                                    <div class="anonymous-photo-message" id="anonymousPhotoMessage" style="display: none;">
+                                        <p>📸 Upload de fotos disponível apenas para contas Google</p>
+                                        <small>Vincule sua conta para usar esta funcionalidade</small>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -292,19 +296,28 @@
             const removeBtn = document.getElementById('removePhotoBtn');
             const deleteBtn = document.getElementById('deleteAccountBtn');
             const photoUploadSection = document.querySelector('.photo-upload-section');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const photoUpload = document.getElementById('photoUpload');
+            const anonymousMessage = document.getElementById('anonymousPhotoMessage');
             
             displayNameInput.value = currentUser.displayName || '';
             
             // Hide photo upload for anonymous users
             if (currentUser.isAnonymous) {
-                photoUploadSection.style.display = 'none';
+                uploadBtn.style.display = 'none';
+                photoUpload.style.display = 'none';
+                removeBtn.style.display = 'none';
                 deleteBtn.style.display = 'none';
+                anonymousMessage.style.display = 'block';
+                
                 previewImage.style.display = 'none';
                 previewInitials.style.display = 'flex';
                 previewInitials.textContent = '👤';
             } else {
-                photoUploadSection.style.display = 'block';
+                uploadBtn.style.display = 'block';
+                photoUpload.style.display = 'none'; // Keep file input hidden
                 deleteBtn.style.display = 'block';
+                anonymousMessage.style.display = 'none';
                 
                 if (currentUser.photoURL) {
                     previewImage.src = currentUser.photoURL;
@@ -330,6 +343,22 @@
         function handlePhotoUpload(e) {
             const file = e.target.files[0];
             if (file) {
+                // Validate file type
+                const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                if (!allowedTypes.includes(file.type)) {
+                    alert('Tipo de arquivo não suportado. Use JPG, PNG, GIF ou WebP.');
+                    e.target.value = '';
+                    return;
+                }
+                
+                // Validate file size (5MB limit)
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                if (file.size > maxSize) {
+                    alert('Arquivo muito grande. Tamanho máximo: 5MB.');
+                    e.target.value = '';
+                    return;
+                }
+                
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const previewImage = document.getElementById('previewImage');
@@ -372,10 +401,6 @@
             const displayName = document.getElementById('profileDisplayName').value.trim();
             const photoUpload = document.getElementById('photoUpload');
             
-            console.log('Starting profile save for user:', currentUser.uid);
-            console.log('Display name:', displayName);
-            console.log('Has photo file:', !!photoUpload.files[0]);
-            
             saveBtn.disabled = true;
             saveBtn.textContent = 'Salvando...';
             
@@ -384,29 +409,31 @@
                 
                 // Handle photo upload first (only for non-anonymous users)
                 if (photoUpload.files[0] && !currentUser.isAnonymous) {
-                    console.log('Uploading new photo...');
+                    saveBtn.textContent = 'Fazendo upload da foto...';
+                    
                     const uploadResult = await uploadProfilePhoto(currentUser.uid, photoUpload.files[0]);
                     if (uploadResult.success) {
                         photoURL = uploadResult.photoURL;
-                        console.log('Photo uploaded successfully:', photoURL);
+                        saveBtn.textContent = 'Salvando perfil...';
                     } else {
                         throw new Error('Falha no upload da foto: ' + uploadResult.error);
                     }
                 } else if (document.getElementById('previewImage').style.display === 'none' && currentUser.photoURL && !currentUser.isAnonymous) {
                     // Photo was removed
-                    console.log('Removing photo...');
+                    saveBtn.textContent = 'Removendo foto...';
+                    
                     const deleteResult = await deleteProfilePhoto(currentUser.uid, currentUser.photoURL);
                     if (deleteResult.success) {
                         photoURL = '';
-                        console.log('Photo removed successfully');
+                        saveBtn.textContent = 'Salvando perfil...';
                     } else {
                         console.warn('Failed to delete photo, but continuing:', deleteResult.error);
                         photoURL = '';
+                        saveBtn.textContent = 'Salvando perfil...';
                     }
                 }
                 
                 // Update profile with all data
-                console.log('Updating profile...');
                 const updateData = {
                     displayName: displayName,
                     photoURL: currentUser.isAnonymous ? '' : photoURL
@@ -417,14 +444,10 @@
                     throw new Error('Falha ao atualizar perfil: ' + updateResult.error);
                 }
                 
-                console.log('Profile updated successfully');
-                
                 // Reload profile in main page
-                console.log('Reloading profile display...');
                 await loadUserProfile(currentUser);
                 
                 hideProfileModal();
-                console.log('Profile save completed successfully');
                 
             } catch (error) {
                 console.error('Error saving profile:', error);

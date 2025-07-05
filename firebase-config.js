@@ -159,13 +159,23 @@ export const uploadProfilePhoto = async (uid, file) => {
             throw new Error('No file provided');
         }
         
+        // Validate file type
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            throw new Error('Tipo de arquivo não suportado. Use JPG, PNG, GIF ou WebP.');
+        }
+        
+        // Validate file size (5MB limit)
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        if (file.size > maxSize) {
+            throw new Error('Arquivo muito grande. Tamanho máximo: 5MB.');
+        }
+        
         // Create a reference to the file location
         const storageRef = ref(storage, `profile-photos/${uid}/${Date.now()}-${file.name}`);
         
-        // Upload the file
+        // Upload the file and get download URL
         const snapshot = await uploadBytes(storageRef, file);
-        
-        // Get the download URL
         const downloadURL = await getDownloadURL(snapshot.ref);
         
         return { success: true, photoURL: downloadURL };
@@ -181,11 +191,21 @@ export const deleteProfilePhoto = async (uid, photoURL) => {
             return { success: true };
         }
         
-        // Create a reference to the file to delete
-        const photoRef = ref(storage, photoURL);
-        
-        // Delete the file
-        await deleteObject(photoRef);
+        // Extract the path from the full URL
+        // Firebase Storage URLs have this format: https://firebasestorage.googleapis.com/v0/b/{bucket}/o/{path}?{query}
+        try {
+            const url = new URL(photoURL);
+            const pathMatch = url.pathname.match(/\/o\/(.+)$/);
+            if (pathMatch) {
+                const filePath = decodeURIComponent(pathMatch[1]);
+                const photoRef = ref(storage, filePath);
+                await deleteObject(photoRef);
+            }
+        } catch (urlError) {
+            // If it's not a full URL, try using it as a path directly
+            const photoRef = ref(storage, photoURL);
+            await deleteObject(photoRef);
+        }
         
         return { success: true };
     } catch (error) {
