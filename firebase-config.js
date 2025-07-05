@@ -30,7 +30,7 @@ const firebaseConfig = {
     apiKey: "AIzaSyDA51YgCq7UAxljlIuAUcgrHhqS8hXbTHQ",
     authDomain: "allsites-49962.firebaseapp.com",
     projectId: "allsites-49962",
-    storageBucket: "allsites-49962.appspot.com", // Corrigido aqui
+    storageBucket: "allsites-49962.firebasestorage.app",
     messagingSenderId: "712864304203",
     appId: "1:712864304203:web:656a21e65dd7e1cc3f91ce",
     measurementId: "G-02DP7Q50XB"
@@ -317,47 +317,17 @@ const rateLimiter = {
 
 // Utility functions
 export const getUserInitials = (displayName, email) => {
-    if (displayName) {
-        return displayName
-            .split(' ')
-            .map(name => name.charAt(0))
-            .join('')
-            .toUpperCase()
-            .slice(0, 2);
-    }
-    
-    if (email) {
-        return email.charAt(0).toUpperCase();
-    }
-    
-    return '?';
-};
-
-export const linkAnonymousAccount = async (credential) => {
-    try {
-        const user = auth.currentUser;
-        if (!user || !user.isAnonymous) {
-            throw new Error('No anonymous user to link');
+    const sanitizedName = displayName ? displayName.trim() : '';
+    if (sanitizedName) {
+        const names = sanitizedName.split(' ').filter(n => n);
+        if (names.length > 1) {
+            return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+        } else if (names.length === 1 && names[0].length > 0) {
+            return names[0][0].toUpperCase();
         }
-        
-        // Link the anonymous account with the credential
-        const result = await linkWithCredential(user, credential);
-        
-        // Update user data in Firestore
-        await updateDoc(doc(db, 'users', user.uid), {
-            email: result.user.email,
-            displayName: result.user.displayName,
-            photoURL: result.user.photoURL,
-            isAnonymous: false,
-            linkedAt: new Date()
-        });
-        
-        return { success: true, user: result.user };
-    } catch (error) {
-        console.error('Error linking anonymous account:', error);
-        return { success: false, error: error.message };
     }
+    if (email) {
+        return email[0].toUpperCase();
+    }
+    return '👤'; // Retorna um ícone de usuário genérico
 };
-
-// Export security utilities for frontend use
-export { sanitizeInput, validateEmail, validateDisplayName };
