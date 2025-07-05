@@ -1,11 +1,10 @@
-// Authentication Module
+// Authentication Module - Simplified
 import { auth } from './firebase-config.js';
 import { 
     GoogleAuthProvider, 
     signInWithPopup, 
     signOut, 
-    onAuthStateChanged,
-    signInAnonymously 
+    onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 
 class AuthManager {
@@ -48,7 +47,7 @@ class AuthManager {
             if (user) {
                 this.user = user;
                 this.showUserInfo(user);
-                this.showNotification(`Bem-vindo, ${user.displayName || 'Usuário'}!`, 'success');
+                this.showToast(`Olá, ${user.displayName || 'Usuário'}! 👋`, 'success');
             } else {
                 this.user = null;
                 this.showLoginButton();
@@ -60,16 +59,7 @@ class AuthManager {
         try {
             this.showLoading();
             const result = await signInWithPopup(auth, this.provider);
-            const user = result.user;
-            
-            // Log do usuário para debug (remover em produção)
-            console.log('User signed in:', {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL
-            });
-            
+            // Success is handled by onAuthStateChanged
         } catch (error) {
             this.hideLoading();
             console.error('Error during sign in:', error);
@@ -78,7 +68,7 @@ class AuthManager {
             
             switch (error.code) {
                 case 'auth/popup-closed-by-user':
-                    errorMessage = 'Login cancelado pelo usuário.';
+                    errorMessage = 'Login cancelado.';
                     break;
                 case 'auth/popup-blocked':
                     errorMessage = 'Pop-up bloqueado. Permita pop-ups para este site.';
@@ -88,17 +78,17 @@ class AuthManager {
                     break;
             }
             
-            this.showNotification(errorMessage, 'error');
+            this.showToast(errorMessage, 'error');
         }
     }
 
     async signOut() {
         try {
             await signOut(auth);
-            this.showNotification('Logout realizado com sucesso!', 'success');
+            this.showToast('Até logo! 👋', 'success');
         } catch (error) {
             console.error('Error during sign out:', error);
-            this.showNotification('Erro ao fazer logout.', 'error');
+            this.showToast('Erro ao fazer logout.', 'error');
         }
     }
 
@@ -131,68 +121,49 @@ class AuthManager {
         if (this.authLoading) this.authLoading.classList.add('hidden');
     }
 
-    showNotification(message, type = 'info') {
-        const container = document.getElementById('notification-container');
+    showToast(message, type = 'info') {
+        const container = document.getElementById('toast-container');
         if (!container) return;
 
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        notification.setAttribute('role', 'alert');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        toast.textContent = message;
 
-        container.appendChild(notification);
+        container.appendChild(toast);
 
-        // Auto remove after 5 seconds
+        // Auto remove after 4 seconds
         setTimeout(() => {
-            if (notification.parentNode) {
-                notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
+            if (toast.parentNode) {
+                toast.style.animation = 'slideOut 0.3s ease forwards';
                 setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
+                    if (toast.parentNode) {
+                        toast.remove();
                     }
                 }, 300);
             }
-        }, 5000);
+        }, 4000);
 
-        // Allow manual removal by clicking
-        notification.addEventListener('click', () => {
-            notification.style.animation = 'slideOutRight 0.3s ease-in forwards';
+        // Click to remove
+        toast.addEventListener('click', () => {
+            toast.style.animation = 'slideOut 0.3s ease forwards';
             setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.remove();
+                if (toast.parentNode) {
+                    toast.remove();
                 }
             }, 300);
         });
     }
 
-    // Getter para verificar se o usuário está logado
     get isLoggedIn() {
         return this.user !== null;
     }
 
-    // Getter para obter dados do usuário
     get currentUser() {
         return this.user;
     }
 }
 
-// Animation for notification removal
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideOutRight {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-    }
-`;
-document.head.appendChild(style);
-
-// Initialize Auth Manager when DOM is loaded
+// Initialize Auth Manager
 let authManager;
 
 if (document.readyState === 'loading') {
@@ -203,5 +174,4 @@ if (document.readyState === 'loading') {
     authManager = new AuthManager();
 }
 
-// Export for potential use in other modules
 export { AuthManager, authManager };

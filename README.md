@@ -1,89 +1,94 @@
 # 🌟 Meu Site de Tudo
 
-Um espaço minimalista e moderno para organizar e descobrir conteúdos interessantes, construído com foco em performance, acessibilidade e experiência do usuário.
+Um hub simples e elegante para suas ferramentas favoritas, com design inspirado no macOS.
 
 ## ✨ Características
 
-### 🎨 Design Moderno
-- Interface dark elegante com elementos glassmorphism
-- Animações suaves e responsivas
-- Suporte a PWA (Progressive Web App)
-- Design responsivo para todos os dispositivos
-
-### 🚀 Performance Otimizada
-- Carregamento rápido com lazy loading
-- Animações otimizadas com `will-change`
-- Monitoramento de performance integrado
-- Suporte a Service Workers
-
-### ♿ Acessibilidade
-- Navegação por teclado completa
-- Suporte a leitores de tela
-- Respeita preferências de movimento reduzido
-- Alto contraste disponível
-- Skip links para navegação rápida
-
-### 📱 Recursos Interativos
-- Sistema de notificações
-- Estados de carregamento visuais
-- Efeitos de ripple em cards
-- Parallax suave no hero
-- Efeito de typing animado
+- **Design macOS**: Interface limpa e minimalista inspirada no macOS
+- **Tema Escuro**: Visual elegante e confortável para os olhos
+- **Login Google**: Autenticação simples e segura via Firebase
+- **Responsivo**: Funciona perfeitamente em desktop e mobile
+- **Em Breve**: Seção dedicada para futuras ferramentas
 
 ## 🛠️ Ferramentas Disponíveis
 
-### 🎬 Hub Organizador do YouTube
-Organize, anote e gerencie seus vídeos e canais favoritos do YouTube com categorias personalizadas.
+### Ativas
+- **🎬 Hub Organizador do YouTube**: Organize seus vídeos e canais favoritos
+- **📚 Rastreador de Estudos**: Acompanhe seu progresso nos estudos
+- **🎯 Desafio 67 Dias**: Transforme sua vida em 67 dias
 
-**Tags:** Organização, YouTube, Produtividade
+### Em Breve
+- **💰 Controle Financeiro**: Gerencie suas finanças pessoais
+- **📝 Bloco de Notas**: Anote ideias importantes
+- **⏰ Pomodoro Timer**: Gerencie seu tempo com técnica Pomodoro
 
-### 📚 Rastreador de Estudos
-Adicione tópicos de estudo e acompanhe seu progresso diário marcando 3 exercícios por matéria.
+## 🚀 Como usar
 
-**Tags:** Estudos, Progresso, Educação
+1. **Servidor local**: Abra `index.html` em um servidor HTTP
+2. **Login**: Clique em "Entrar com Google" para fazer login
+3. **Navegue**: Clique nas ferramentas para acessá-las
 
-### 🎯 Desafio 67 Dias
-Transforme sua vida em 67 dias com hábitos consistentes e acompanhamento diário.
+### Executar localmente
 
-**Tags:** Hábitos, Desafio, Crescimento
-  - Upload de foto de perfil (apenas Google)
-  - Exclusão de conta
+```bash
+# Python
+python -m http.server 8000
 
-- **Links para Aplicações Externas**:
-  - Hub Organizador do YouTube: `https://youtube-hub.netlify.app/`
-  - Rastreador de Estudos: `https://study-tracker.netlify.app/`
-  - Desafio 67 Dias: `https://66dias.netlify.app/`
+# Node.js (http-server)
+npm install -g http-server
+http-server . -p 8000
 
-## Configuração do Firebase
+# PHP
+php -S localhost:8000
+```
 
-As configurações já estão aplicadas no projeto. Para usar:
+Acesse: `http://localhost:8000`
 
-1. **Ative no Firebase Console**:
-   - Authentication (Google + Anônimo)
+## ⚙️ Configuração Firebase
+
+As configurações já estão aplicadas. Para usar:
+
+1. **Firebase Console**: https://console.firebase.google.com/
+2. **Projeto**: oiii-97eaa
+3. **Ativar**:
+   - Authentication (Google)
    - Firestore Database (modo teste)
 
-2. **Configure as regras de segurança**:
+## 📱 Recursos
 
-**Firestore:**
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
+- **Notificações toast**: Feedback visual elegante
+- **Hover effects**: Animações suaves estilo macOS  
+- **Loading states**: Estados de carregamento visuais
+- **Cards "Em breve"**: Preview de futuras ferramentas
+
+## 🎨 Design System
+
+- **Cores**: Tons de cinza escuro com azul de destaque (#007AFF)
+- **Tipografia**: SF Pro Display (sistema Apple)
+- **Sombras**: Sutis e elegantes
+- **Bordas**: Arredondadas (12-16px)
+- **Backdrop blur**: Efeito de vidro fosco
+
+## 📁 Estrutura
+
+```
+📁 ALLSites/
+├── 📄 index.html          # Página principal
+├── 📄 styles.css          # Estilos macOS
+├── 📄 script.js           # JavaScript simplificado
+├── 📄 auth.js             # Autenticação Firebase
+├── 📄 firebase-config.js  # Configuração Firebase
+└── 📄 README.md          # Documentação
 ```
 
-**Storage:**
-```javascript
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /profile-photos/{userId}/{allPaths=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-  }
-}
-```
+## 🔮 Próximos Passos
+
+- [ ] Implementar ferramentas "Em breve"
+- [ ] Adicionar modo claro/escuro
+- [ ] Sistema de favoritos
+- [ ] Busca por ferramentas
+- [ ] Categorias personalizadas
+
+---
+
+Feito com ❤️ para organizar suas ferramentas favoritas

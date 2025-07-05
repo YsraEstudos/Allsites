@@ -4,51 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌟 Meu Site de Tudo</title>
-    <meta name="description" content="Um espaço minimalista e moderno para organizar e descobrir conteúdos interessantes">
     
-    <!-- Preconnect para melhor performance -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- CSS -->
     <link rel="stylesheet" href="styles.css">
     
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#0f0f0f">
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- Icons -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='24' font-size='24'>🌟</text></svg>">
+    <!-- Icon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='24' font-size='24'>🌟</text></svg>">
 </head>
 <body>
-    <!-- Skip Link para Acessibilidade -->
-    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
-    
     <!-- Header -->
     <header class="header">
         <div class="container">
-            <div class="header-content">
-                <h1 class="logo">
+            <div class="nav">
+                <div class="logo">
                     <span class="logo-icon">🌟</span>
-                    <span class="logo-text typing-animation">Meu Site de Tudo</span>
-                </h1>
+                    Meu Site de Tudo
+                </div>
                 
                 <div class="auth-section">
-                    <div id="auth-loading" class="loading hidden">
-                        <div class="loading-spinner"></div>
-                    </div>
+                    <div id="auth-loading" class="loading hidden">●●●</div>
                     
                     <div id="user-info" class="user-info hidden">
-                        <img id="user-avatar" class="user-avatar" alt="Avatar do usuário">
+                        <img id="user-avatar" class="user-avatar" alt="Avatar">
                         <span id="user-name" class="user-name"></span>
-                        <button id="logout-btn" class="btn btn-secondary">Sair</button>
+                        <button id="logout-btn" class="btn btn-ghost">Sair</button>
                     </div>
                     
                     <button id="login-btn" class="btn btn-primary">
-                        <span class="btn-icon">🔐</span>
                         Entrar com Google
                     </button>
                 </div>
@@ -56,142 +43,73 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main id="main-content" class="main">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="container">
-                <div class="hero-content">
-                    <h2 class="hero-title">
-                        Um espaço minimalista e moderno para 
-                        <span class="highlight">organizar</span> e 
-                        <span class="highlight">descobrir</span> conteúdos interessantes
-                    </h2>
-                    <p class="hero-description">
-                        Construído com foco em performance, acessibilidade e experiência do usuário
-                    </p>
-                </div>
-            </div>
-            <div class="hero-background"></div>
-        </section>
+    <!-- Main -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero -->
+            <section class="hero">
+                <h1 class="hero-title">Ferramentas úteis em um só lugar</h1>
+                <p class="hero-subtitle">Organize, estude e cresça com nossas ferramentas</p>
+            </section>
 
-        <!-- Features Grid -->
-        <section class="features" id="features">
-            <div class="container">
-                <h2 class="section-title">✨ Características</h2>
-                
-                <div class="features-grid">
-                    <div class="feature-card" tabindex="0">
-                        <div class="feature-icon">🎨</div>
-                        <h3 class="feature-title">Design Moderno</h3>
-                        <ul class="feature-list">
-                            <li>Interface dark elegante com elementos glassmorphism</li>
-                            <li>Animações suaves e responsivas</li>
-                            <li>Suporte a PWA (Progressive Web App)</li>
-                            <li>Design responsivo para todos os dispositivos</li>
-                        </ul>
-                    </div>
-
-                    <div class="feature-card" tabindex="0">
-                        <div class="feature-icon">🚀</div>
-                        <h3 class="feature-title">Performance Otimizada</h3>
-                        <ul class="feature-list">
-                            <li>Carregamento rápido com lazy loading</li>
-                            <li>Animações otimizadas com will-change</li>
-                            <li>Monitoramento de performance integrado</li>
-                            <li>Suporte a Service Workers</li>
-                        </ul>
-                    </div>
-
-                    <div class="feature-card" tabindex="0">
-                        <div class="feature-icon">♿</div>
-                        <h3 class="feature-title">Acessibilidade</h3>
-                        <ul class="feature-list">
-                            <li>Navegação por teclado completa</li>
-                            <li>Suporte a leitores de tela</li>
-                            <li>Respeita preferências de movimento reduzido</li>
-                            <li>Alto contraste disponível</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Tools Section -->
-        <section class="tools" id="tools">
-            <div class="container">
-                <h2 class="section-title">🛠️ Ferramentas Disponíveis</h2>
-                
+            <!-- Tools Grid -->
+            <section class="tools">
                 <div class="tools-grid">
-                    <div class="tool-card" tabindex="0">
-                        <div class="tool-header">
-                            <div class="tool-icon">🎬</div>
-                            <h3 class="tool-title">Hub Organizador do YouTube</h3>
-                        </div>
-                        <p class="tool-description">
-                            Organize, anote e gerencie seus vídeos e canais favoritos do YouTube com categorias personalizadas.
-                        </p>
-                        <div class="tool-tags">
-                            <span class="tag">Organização</span>
-                            <span class="tag">YouTube</span>
-                            <span class="tag">Produtividade</span>
-                        </div>
-                        <a href="https://youtube-hub.netlify.app/" target="_blank" rel="noopener noreferrer" class="tool-link">
-                            Acessar Hub <span class="link-icon">↗</span>
+                    <div class="tool-card">
+                        <div class="tool-icon">�</div>
+                        <h3 class="tool-title">Hub Organizador do YouTube</h3>
+                        <p class="tool-description">Organize seus vídeos e canais favoritos</p>
+                        <a href="https://youtube-hub.netlify.app/" target="_blank" class="tool-link">
+                            Acessar <span class="arrow">→</span>
                         </a>
                     </div>
 
-                    <div class="tool-card" tabindex="0">
-                        <div class="tool-header">
-                            <div class="tool-icon">📚</div>
-                            <h3 class="tool-title">Rastreador de Estudos</h3>
-                        </div>
-                        <p class="tool-description">
-                            Adicione tópicos de estudo e acompanhe seu progresso diário marcando 3 exercícios por matéria.
-                        </p>
-                        <div class="tool-tags">
-                            <span class="tag">Estudos</span>
-                            <span class="tag">Progresso</span>
-                            <span class="tag">Educação</span>
-                        </div>
-                        <a href="https://study-tracker.netlify.app/" target="_blank" rel="noopener noreferrer" class="tool-link">
-                            Acessar Tracker <span class="link-icon">↗</span>
+                    <div class="tool-card">
+                        <div class="tool-icon">📚</div>
+                        <h3 class="tool-title">Rastreador de Estudos</h3>
+                        <p class="tool-description">Acompanhe seu progresso nos estudos</p>
+                        <a href="https://study-tracker.netlify.app/" target="_blank" class="tool-link">
+                            Acessar <span class="arrow">→</span>
                         </a>
                     </div>
 
-                    <div class="tool-card" tabindex="0">
-                        <div class="tool-header">
-                            <div class="tool-icon">🎯</div>
-                            <h3 class="tool-title">Desafio 67 Dias</h3>
-                        </div>
-                        <p class="tool-description">
-                            Transforme sua vida em 67 dias com hábitos consistentes e acompanhamento diário.
-                        </p>
-                        <div class="tool-tags">
-                            <span class="tag">Hábitos</span>
-                            <span class="tag">Desafio</span>
-                            <span class="tag">Crescimento</span>
-                        </div>
-                        <a href="https://66dias.netlify.app/" target="_blank" rel="noopener noreferrer" class="tool-link">
-                            Iniciar Desafio <span class="link-icon">↗</span>
+                    <div class="tool-card">
+                        <div class="tool-icon">�</div>
+                        <h3 class="tool-title">Desafio 67 Dias</h3>
+                        <p class="tool-description">Transforme sua vida em 67 dias</p>
+                        <a href="https://66dias.netlify.app/" target="_blank" class="tool-link">
+                            Acessar <span class="arrow">→</span>
                         </a>
+                    </div>
+
+                    <!-- Coming Soon Cards -->
+                    <div class="tool-card coming-soon">
+                        <div class="tool-icon">�</div>
+                        <h3 class="tool-title">Controle Financeiro</h3>
+                        <p class="tool-description">Gerencie suas finanças pessoais</p>
+                        <div class="coming-soon-badge">Em breve</div>
+                    </div>
+
+                    <div class="tool-card coming-soon">
+                        <div class="tool-icon">📝</div>
+                        <h3 class="tool-title">Bloco de Notas</h3>
+                        <p class="tool-description">Anote ideias importantes</p>
+                        <div class="coming-soon-badge">Em breve</div>
+                    </div>
+
+                    <div class="tool-card coming-soon">
+                        <div class="tool-icon">⏰</div>
+                        <h3 class="tool-title">Pomodoro Timer</h3>
+                        <p class="tool-description">Gerencie seu tempo com técnica Pomodoro</p>
+                        <div class="coming-soon-badge">Em breve</div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <p class="footer-text">
-                Feito com <span class="heart">❤️</span> para organizar e descobrir conteúdos interessantes
-            </p>
-        </div>
-    </footer>
-
-    <!-- Notification System -->
-    <div id="notification-container" class="notification-container" aria-live="polite"></div>
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
 
     <!-- Scripts -->
     <script type="module" src="firebase-config.js"></script>
