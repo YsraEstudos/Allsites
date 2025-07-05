@@ -1,7 +1,8 @@
 // Firebase Configuration
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
 import { getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, collection, addDoc, getDocs, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js';
 import { getAnalytics } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-analytics.js';
 
 // Your web app's Firebase configuration
@@ -17,12 +18,13 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-let app, auth, db, analytics;
+let app, auth, db, storage, analytics;
 
 try {
   app = initializeApp(firebaseConfig);
   auth = getAuth(app);
   db = getFirestore(app);
+  storage = getStorage(app);
   
   // Only initialize analytics if measurementId is provided
   if (firebaseConfig.measurementId) {
@@ -34,7 +36,7 @@ try {
   console.error('Firebase initialization error:', error);
 }
 
-export { auth, db, analytics };
+export { auth, db, storage, analytics };
 
 // Gemini API Configuration
 export const GEMINI_API_KEY = "AIzaSyCqBfKXNDOL9ctuOJXfY03iAMJhqCHyWs0";
@@ -50,9 +52,27 @@ export async function loginUser(email, password) {
   }
 }
 
-export async function registerUser(email, password) {
+export async function registerUser(email, password, displayName) {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    
+    // Update user profile with display name
+    if (displayName) {
+      await updateProfile(user, {
+        displayName: displayName
+      });
+    }
+    
+    // Create user document in Firestore
+    await setDoc(doc(db, 'users', user.uid), {
+      email: user.email,
+      displayName: displayName || '',
+      photoURL: user.photoURL || '',
+      createdAt: new Date(),
+      updatedAt: new Date()
+    });
+    
     return { success: true, user: userCredential.user };
   } catch (error) {
     return { success: false, error: error.message };
@@ -208,4 +228,95 @@ export async function generateWithGemini(prompt) {
 // Auth state observer
 export function onAuthStateChange(callback) {
   return onAuthStateChanged(auth, callback);
+}
+
+// Profile management functions
+export async function updateUserProfile(userId, profileData) {
+  try {
+    const user = auth.currentUser;
+    if (user && user.uid === userId) {
+      // Update Firebase Auth profile
+      const updateData = {};
+      if (profileData.displayName !== undefined) updateData.displayName = profileData.displayName;
+      if (profileData.photoURL !== undefined) updateData.photoURL = profileData.photoURL;
+      
+      if (Object.keys(updateData).length > 0) {
+        await updateProfile(user, updateData);
+      }
+    }
+    
+    // Update Firestore document
+    const userRef = doc(db, 'users', userId);
+    await updateDoc(userRef, {
+      ...profileData,
+      updatedAt: new Date()
+    });
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getUserProfile(userId) {
+  try {
+    const userRef = doc(db, 'users', userId);
+    const userSnap = await getDoc(userRef);
+    
+    if (userSnap.exists()) {
+      return { success: true, profile: userSnap.data() };
+    } else {
+      return { success: false, error: 'Profile not found' };
+    }
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function uploadProfilePhoto(userId, file) {
+  try {
+    // Create a reference to the file location
+    const fileRef = ref(storage, `profile-photos/${userId}/${file.name}`);
+    
+    // Upload the file
+    const snapshot = await uploadBytes(fileRef, file);
+    
+    // Get the download URL
+    const downloadURL = await getDownloadURL(snapshot.ref);
+    
+    // Update user profile with new photo URL
+    await updateUserProfile(userId, { photoURL: downloadURL });
+    
+    return { success: true, photoURL: downloadURL };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteProfilePhoto(userId, photoURL) {
+  try {
+    // Delete from storage
+    if (photoURL) {
+      const photoRef = ref(storage, photoURL);
+      await deleteObject(photoRef);
+    }
+    
+    // Update user profile
+    await updateUserProfile(userId, { photoURL: '' });
+    
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+// Helper function to get user initials
+export function getUserInitials(displayName, email) {
+  if (displayName) {
+    return displayName.split(' ').map(name => name.charAt(0).toUpperCase()).join('').substring(0, 2);
+  }
+  if (email) {
+    return email.charAt(0).toUpperCase();
+  }
+  return 'U';
 }

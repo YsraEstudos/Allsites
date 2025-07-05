@@ -20,8 +20,20 @@
             </nav>
             <div class="auth-section" id="authSection">
                 <div class="user-info" id="userInfo" style="display: none;">
-                    <span id="userEmail"></span>
-                    <button id="logoutBtn" class="logout-btn">Sair</button>
+                    <div class="user-profile">
+                        <div class="profile-photo" id="profilePhoto">
+                            <img id="profileImage" style="display: none;" alt="Foto do perfil">
+                            <div class="profile-initials" id="profileInitials"></div>
+                        </div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName"></span>
+                            <span class="user-email" id="userEmail"></span>
+                        </div>
+                        <div class="user-actions">
+                            <button id="profileBtn" class="profile-btn" title="Editar Perfil">⚙️</button>
+                            <button id="logoutBtn" class="logout-btn">Sair</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="login-prompt" id="loginPrompt">
                     <a href="auth/login.html" class="login-link">Entrar</a>
@@ -76,36 +88,266 @@
     </footer>
 
     <script type="module">
-        import { onAuthStateChange, logoutUser } from './firebase-config.js';
+        import { onAuthStateChange, logoutUser, getUserProfile, updateUserProfile, uploadProfilePhoto, deleteProfilePhoto, getUserInitials } from './firebase-config.js';
 
         const userInfo = document.getElementById('userInfo');
         const loginPrompt = document.getElementById('loginPrompt');
+        const userName = document.getElementById('userName');
         const userEmail = document.getElementById('userEmail');
+        const profilePhoto = document.getElementById('profilePhoto');
+        const profileImage = document.getElementById('profileImage');
+        const profileInitials = document.getElementById('profileInitials');
         const logoutBtn = document.getElementById('logoutBtn');
+        const profileBtn = document.getElementById('profileBtn');
+
+        let currentUser = null;
 
         // Auth state observer
-        onAuthStateChange((user) => {
+        onAuthStateChange(async (user) => {
+            currentUser = user;
             if (user) {
                 // User is signed in
                 userEmail.textContent = user.email;
+                
+                // Load user profile
+                await loadUserProfile(user);
+                
                 userInfo.style.display = 'flex';
                 loginPrompt.style.display = 'none';
             } else {
-                // User is signed out
-                userInfo.style.display = 'none';
-                loginPrompt.style.display = 'block';
+                // User is signed out - redirect to login
+                window.location.href = 'auth/login.html';
             }
         });
+
+        async function loadUserProfile(user) {
+            try {
+                const result = await getUserProfile(user.uid);
+                let profile = result.success ? result.profile : {};
+                
+                // Use Firebase Auth data as fallback
+                const displayName = profile.displayName || user.displayName || '';
+                const photoURL = profile.photoURL || user.photoURL || '';
+                
+                // Update display name
+                userName.textContent = displayName || user.email.split('@')[0];
+                
+                // Update profile photo
+                if (photoURL) {
+                    profileImage.src = photoURL;
+                    profileImage.style.display = 'block';
+                    profileInitials.style.display = 'none';
+                } else {
+                    profileImage.style.display = 'none';
+                    profileInitials.style.display = 'flex';
+                    profileInitials.textContent = getUserInitials(displayName, user.email);
+                }
+                
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                // Use fallback values
+                userName.textContent = user.email.split('@')[0];
+                profileImage.style.display = 'none';
+                profileInitials.style.display = 'flex';
+                profileInitials.textContent = getUserInitials('', user.email);
+            }
+        }
 
         // Logout handler
         logoutBtn.addEventListener('click', async () => {
             try {
                 await logoutUser();
-                // Auth state observer will handle UI updates
+                // Auth state observer will handle redirect
             } catch (error) {
                 console.error('Error signing out:', error);
             }
         });
+
+        // Profile modal functionality
+        profileBtn.addEventListener('click', () => {
+            if (currentUser) {
+                showProfileModal();
+            }
+        });
+
+        function showProfileModal() {
+            // Create profile modal if it doesn't exist
+            if (!document.getElementById('profileModal')) {
+                createProfileModal();
+            }
+            
+            const modal = document.getElementById('profileModal');
+            populateProfileModal();
+            modal.classList.add('active');
+        }
+
+        function createProfileModal() {
+            const modalHTML = `
+                <div id="profileModal" class="profile-modal">
+                    <div class="profile-modal-content">
+                        <div class="profile-modal-header">
+                            <h3 class="profile-modal-title">Editar Perfil</h3>
+                            <button class="profile-modal-close" id="closeProfileModal">×</button>
+                        </div>
+                        
+                        <form class="profile-form" id="profileForm">
+                            <div class="profile-photo-section">
+                                <div class="profile-photo-preview" id="photoPreview">
+                                    <img id="previewImage" style="display: none;" alt="Preview">
+                                    <div class="profile-initials" id="previewInitials"></div>
+                                </div>
+                                
+                                <div class="photo-upload-section">
+                                    <input type="file" id="photoUpload" class="photo-upload-input" accept="image/*">
+                                    <button type="button" class="photo-upload-btn" id="uploadBtn">Escolher Foto</button>
+                                    <button type="button" class="photo-remove-btn" id="removePhotoBtn" style="display: none;">Remover Foto</button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="profileDisplayName">Nome</label>
+                                <input type="text" id="profileDisplayName" placeholder="Seu nome completo">
+                            </div>
+                            
+                            <div class="profile-modal-actions">
+                                <button type="button" class="profile-cancel-btn" id="cancelProfileBtn">Cancelar</button>
+                                <button type="submit" class="profile-save-btn" id="saveProfileBtn">Salvar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Add event listeners
+            document.getElementById('closeProfileModal').addEventListener('click', hideProfileModal);
+            document.getElementById('cancelProfileBtn').addEventListener('click', hideProfileModal);
+            document.getElementById('uploadBtn').addEventListener('click', () => {
+                document.getElementById('photoUpload').click();
+            });
+            document.getElementById('photoUpload').addEventListener('change', handlePhotoUpload);
+            document.getElementById('removePhotoBtn').addEventListener('click', handlePhotoRemove);
+            document.getElementById('profileForm').addEventListener('submit', handleProfileSave);
+            
+            // Close modal when clicking outside
+            document.getElementById('profileModal').addEventListener('click', (e) => {
+                if (e.target.id === 'profileModal') {
+                    hideProfileModal();
+                }
+            });
+        }
+
+        function populateProfileModal() {
+            if (!currentUser) return;
+            
+            const displayNameInput = document.getElementById('profileDisplayName');
+            const previewImage = document.getElementById('previewImage');
+            const previewInitials = document.getElementById('previewInitials');
+            const removeBtn = document.getElementById('removePhotoBtn');
+            
+            displayNameInput.value = currentUser.displayName || '';
+            
+            if (currentUser.photoURL) {
+                previewImage.src = currentUser.photoURL;
+                previewImage.style.display = 'block';
+                previewInitials.style.display = 'none';
+                removeBtn.style.display = 'block';
+            } else {
+                previewImage.style.display = 'none';
+                previewInitials.style.display = 'flex';
+                previewInitials.textContent = getUserInitials(currentUser.displayName, currentUser.email);
+                removeBtn.style.display = 'none';
+            }
+        }
+
+        function hideProfileModal() {
+            const modal = document.getElementById('profileModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function handlePhotoUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const previewImage = document.getElementById('previewImage');
+                    const previewInitials = document.getElementById('previewInitials');
+                    const removeBtn = document.getElementById('removePhotoBtn');
+                    
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                    previewInitials.style.display = 'none';
+                    removeBtn.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handlePhotoRemove() {
+            const previewImage = document.getElementById('previewImage');
+            const previewInitials = document.getElementById('previewInitials');
+            const removeBtn = document.getElementById('removePhotoBtn');
+            const photoUpload = document.getElementById('photoUpload');
+            
+            previewImage.style.display = 'none';
+            previewInitials.style.display = 'flex';
+            removeBtn.style.display = 'none';
+            photoUpload.value = '';
+            
+            const displayName = document.getElementById('profileDisplayName').value;
+            previewInitials.textContent = getUserInitials(displayName, currentUser.email);
+        }
+
+        async function handleProfileSave(e) {
+            e.preventDefault();
+            
+            if (!currentUser) return;
+            
+            const saveBtn = document.getElementById('saveProfileBtn');
+            const displayName = document.getElementById('profileDisplayName').value.trim();
+            const photoUpload = document.getElementById('photoUpload');
+            
+            saveBtn.disabled = true;
+            saveBtn.textContent = 'Salvando...';
+            
+            try {
+                let photoURL = currentUser.photoURL;
+                
+                // Handle photo upload
+                if (photoUpload.files[0]) {
+                    const uploadResult = await uploadProfilePhoto(currentUser.uid, photoUpload.files[0]);
+                    if (uploadResult.success) {
+                        photoURL = uploadResult.photoURL;
+                    }
+                } else if (document.getElementById('previewImage').style.display === 'none' && currentUser.photoURL) {
+                    // Photo was removed
+                    await deleteProfilePhoto(currentUser.uid, currentUser.photoURL);
+                    photoURL = '';
+                }
+                
+                // Update profile
+                const updateData = {
+                    displayName: displayName,
+                    photoURL: photoURL
+                };
+                
+                await updateUserProfile(currentUser.uid, updateData);
+                
+                // Reload profile in main page
+                await loadUserProfile(currentUser);
+                
+                hideProfileModal();
+            } catch (error) {
+                console.error('Error saving profile:', error);
+                alert('Erro ao salvar perfil. Tente novamente.');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = 'Salvar';
+            }
+        }
     </script>
 </body>
 </html>

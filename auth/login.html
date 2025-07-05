@@ -154,6 +154,11 @@
             <div id="errorMessage" class="error-message" style="display: none;"></div>
             
             <form class="auth-form" id="authForm">
+                <div class="form-group" id="nameGroup" style="display: none;">
+                    <label for="displayName">Nome</label>
+                    <input type="text" id="displayName" name="displayName" placeholder="Seu nome completo">
+                </div>
+                
                 <div class="form-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" placeholder="seu@email.com" required>
@@ -187,6 +192,8 @@
         const errorMessage = document.getElementById('errorMessage');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
+        const displayNameInput = document.getElementById('displayName');
+        const nameGroup = document.getElementById('nameGroup');
 
         // Check if user is already authenticated
         onAuthStateChange((user) => {
@@ -204,11 +211,15 @@
                 authButton.textContent = 'Entrar';
                 switchText.textContent = 'Não tem uma conta?';
                 switchMode.textContent = 'Cadastrar';
+                nameGroup.style.display = 'none';
+                displayNameInput.required = false;
             } else {
                 authTitle.textContent = 'Cadastrar';
                 authButton.textContent = 'Cadastrar';
                 switchText.textContent = 'Já tem uma conta?';
                 switchMode.textContent = 'Entrar';
+                nameGroup.style.display = 'block';
+                displayNameInput.required = true;
             }
             
             hideError();
@@ -227,9 +238,11 @@
             const card = document.querySelector('.auth-card');
             if (loading) {
                 card.classList.add('loading');
+                authButton.disabled = true; // Desabilitar o botão
                 authButton.textContent = 'Carregando...';
             } else {
                 card.classList.remove('loading');
+                authButton.disabled = false; // Habilitar o botão
                 authButton.textContent = isLoginMode ? 'Entrar' : 'Cadastrar';
             }
         }
@@ -241,9 +254,15 @@
             
             const email = emailInput.value.trim();
             const password = passwordInput.value;
+            const displayName = displayNameInput.value.trim();
             
             if (!email || !password) {
                 showError('Por favor, preencha todos os campos.');
+                return;
+            }
+
+            if (!isLoginMode && !displayName) {
+                showError('Por favor, informe seu nome.');
                 return;
             }
 
@@ -258,7 +277,7 @@
             try {
                 const result = isLoginMode 
                     ? await loginUser(email, password)
-                    : await registerUser(email, password);
+                    : await registerUser(email, password, displayName);
 
                 if (result.success) {
                     // Success will be handled by the auth state observer
