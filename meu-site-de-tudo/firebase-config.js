@@ -17,10 +17,24 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const analytics = getAnalytics(app);
+let app, auth, db, analytics;
+
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  
+  // Only initialize analytics if measurementId is provided
+  if (firebaseConfig.measurementId) {
+    analytics = getAnalytics(app);
+  }
+  
+  console.log('Firebase initialized successfully');
+} catch (error) {
+  console.error('Firebase initialization error:', error);
+}
+
+export { auth, db, analytics };
 
 // Gemini API Configuration
 export const GEMINI_API_KEY = "AIzaSyCqBfKXNDOL9ctuOJXfY03iAMJhqCHyWs0";
