@@ -3,162 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self'; 
-        script-src 'self' https://www.gstatic.com https://apis.google.com; 
-        style-src 'self' 'unsafe-inline'; 
-        img-src 'self' data: https: https://lh3.googleusercontent.com; 
-        connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com; 
-        frame-src https://accounts.google.com; 
-        object-src 'none';">
-    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-    <meta name="referrer" content="strict-origin-when-cross-origin">
-    <meta name="description" content="Um espaço minimalista para organizar e descobrir conteúdos interessantes. Acesse ferramentas para YouTube, estudos e desenvolvimento de hábitos.">
-    <meta name="keywords" content="organização, produtividade, estudos, YouTube, hábitos, ferramentas, desenvolvimento pessoal">
-    <meta name="author" content="Meu Site de Tudo">
-    <meta property="og:title" content="Meu Site de Tudo - Home">
-    <meta property="og:description" content="Um espaço minimalista para organizar e descobrir conteúdos interessantes">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://meusitedetudo.com">
-    <meta property="og:image" content="https://meusitedetudo.com/assets/og-image.jpg">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Meu Site de Tudo - Home">
-    <meta name="twitter:description" content="Um espaço minimalista para organizar e descobrir conteúdos interessantes">
-    <meta name="twitter:image" content="https://meusitedetudo.com/assets/twitter-image.jpg">
+    <title>🌟 Meu Site de Tudo</title>
+    <meta name="description" content="Um espaço minimalista e moderno para organizar e descobrir conteúdos interessantes">
+    
+    <!-- Preconnect para melhor performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#0f0f0f">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-    <link rel="alternate icon" href="assets/favicon.ico">
-    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="SiteTudo">
-    <title>Meu Site de Tudo - Home</title>
-    <link rel="stylesheet" href="estilo.css">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='24' font-size='24'>🌟</text></svg>">
 </head>
 <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Carregando...</p>
-        </div>
-    </div>
-
-    <header>
+    <!-- Skip Link para Acessibilidade -->
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+    
+    <!-- Header -->
+    <header class="header">
         <div class="container">
-            <h1>Meu Site de Tudo</h1>
-            <div class="auth-section" id="authSection">
-                <div class="user-info" id="userInfo" style="display: none;">
-                    <div class="user-profile">
-                        <div class="profile-photo" id="profilePhoto">
-                            <img id="profileImage" style="display: none;" alt="Foto do perfil">
-                            <div class="profile-initials" id="profileInitials"></div>
-                        </div>
-                        <div class="user-details">
-                            <span class="user-name" id="userName"></span>
-                            <span class="user-email" id="userEmail"></span>
-                        </div>
-                        <div class="user-actions">
-                            <button id="profileBtn" class="profile-btn" title="Editar Perfil">⚙️</button>
-                            <button id="linkAccountBtn" class="link-account-btn" title="Vincular Conta Google" style="display: none;">🔗</button>
-                            <button id="logoutBtn" class="logout-btn">Sair</button>
-                        </div>
+            <div class="header-content">
+                <h1 class="logo">
+                    <span class="logo-icon">🌟</span>
+                    <span class="logo-text typing-animation">Meu Site de Tudo</span>
+                </h1>
+                
+                <div class="auth-section">
+                    <div id="auth-loading" class="loading hidden">
+                        <div class="loading-spinner"></div>
                     </div>
-                </div>
-                <div class="login-prompt" id="loginPrompt">
-                    <a href="auth/login.html" class="login-link">Entrar</a>
+                    
+                    <div id="user-info" class="user-info hidden">
+                        <img id="user-avatar" class="user-avatar" alt="Avatar do usuário">
+                        <span id="user-name" class="user-name"></span>
+                        <button id="logout-btn" class="btn btn-secondary">Sair</button>
+                    </div>
+                    
+                    <button id="login-btn" class="btn btn-primary">
+                        <span class="btn-icon">🔐</span>
+                        Entrar com Google
+                    </button>
                 </div>
             </div>
         </div>
     </header>
 
-    <main>
-        <div class="container">
-            <section class="hero">
-                <h2 class="typing-effect">Bem-vindo ao Meu Site de Tudo</h2>
-                <p>Um espaço minimalista para organizar e descobrir conteúdos interessantes.</p>
-                <div class="hero-stats" style="margin-top: 24px;">
-                    <div class="stat-item">
-                        <span class="stat-number">3</span>
-                        <span class="stat-label">Ferramentas Ativas</span>
+    <!-- Main Content -->
+    <main id="main-content" class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h2 class="hero-title">
+                        Um espaço minimalista e moderno para 
+                        <span class="highlight">organizar</span> e 
+                        <span class="highlight">descobrir</span> conteúdos interessantes
+                    </h2>
+                    <p class="hero-description">
+                        Construído com foco em performance, acessibilidade e experiência do usuário
+                    </p>
+                </div>
+            </div>
+            <div class="hero-background"></div>
+        </section>
+
+        <!-- Features Grid -->
+        <section class="features" id="features">
+            <div class="container">
+                <h2 class="section-title">✨ Características</h2>
+                
+                <div class="features-grid">
+                    <div class="feature-card" tabindex="0">
+                        <div class="feature-icon">🎨</div>
+                        <h3 class="feature-title">Design Moderno</h3>
+                        <ul class="feature-list">
+                            <li>Interface dark elegante com elementos glassmorphism</li>
+                            <li>Animações suaves e responsivas</li>
+                            <li>Suporte a PWA (Progressive Web App)</li>
+                            <li>Design responsivo para todos os dispositivos</li>
+                        </ul>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number">100%</span>
-                        <span class="stat-label">Gratuito</span>
+
+                    <div class="feature-card" tabindex="0">
+                        <div class="feature-icon">🚀</div>
+                        <h3 class="feature-title">Performance Otimizada</h3>
+                        <ul class="feature-list">
+                            <li>Carregamento rápido com lazy loading</li>
+                            <li>Animações otimizadas com will-change</li>
+                            <li>Monitoramento de performance integrado</li>
+                            <li>Suporte a Service Workers</li>
+                        </ul>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number">24/7</span>
-                        <span class="stat-label">Disponível</span>
+
+                    <div class="feature-card" tabindex="0">
+                        <div class="feature-icon">♿</div>
+                        <h3 class="feature-title">Acessibilidade</h3>
+                        <ul class="feature-list">
+                            <li>Navegação por teclado completa</li>
+                            <li>Suporte a leitores de tela</li>
+                            <li>Respeita preferências de movimento reduzido</li>
+                            <li>Alto contraste disponível</li>
+                        </ul>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-            <section class="sections">
-                <h3>Seções Disponíveis</h3>
-                <div class="section-cards">
-                    <div class="card">
-                        <div class="card-icon">🎬</div>
-                        <h4>Hub Organizador do YouTube</h4>
-                        <p>Organize, anote e gerencie seus vídeos e canais favoritos do YouTube com categorias personalizadas</p>
-                        <div class="card-tags">
+        <!-- Tools Section -->
+        <section class="tools" id="tools">
+            <div class="container">
+                <h2 class="section-title">🛠️ Ferramentas Disponíveis</h2>
+                
+                <div class="tools-grid">
+                    <div class="tool-card" tabindex="0">
+                        <div class="tool-header">
+                            <div class="tool-icon">🎬</div>
+                            <h3 class="tool-title">Hub Organizador do YouTube</h3>
+                        </div>
+                        <p class="tool-description">
+                            Organize, anote e gerencie seus vídeos e canais favoritos do YouTube com categorias personalizadas.
+                        </p>
+                        <div class="tool-tags">
                             <span class="tag">Organização</span>
                             <span class="tag">YouTube</span>
                             <span class="tag">Produtividade</span>
                         </div>
-                        <a href="https://youtube-hub.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn primary" aria-label="Acessar Hub Organizador do YouTube">Acessar Hub</a>
+                        <a href="https://youtube-hub.netlify.app/" target="_blank" rel="noopener noreferrer" class="tool-link">
+                            Acessar Hub <span class="link-icon">↗</span>
+                        </a>
                     </div>
 
-                    <div class="card">
-                        <div class="card-icon">📚</div>
-                        <h4>Rastreador de Estudos</h4>
-                        <p>Adicione tópicos de estudo e acompanhe seu progresso diário marcando 3 exercícios por matéria</p>
-                        <div class="card-tags">
+                    <div class="tool-card" tabindex="0">
+                        <div class="tool-header">
+                            <div class="tool-icon">📚</div>
+                            <h3 class="tool-title">Rastreador de Estudos</h3>
+                        </div>
+                        <p class="tool-description">
+                            Adicione tópicos de estudo e acompanhe seu progresso diário marcando 3 exercícios por matéria.
+                        </p>
+                        <div class="tool-tags">
                             <span class="tag">Estudos</span>
                             <span class="tag">Progresso</span>
                             <span class="tag">Educação</span>
                         </div>
-                        <a href="https://study-tracker.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn primary" aria-label="Acessar Rastreador de Estudos">Acessar Rastreador</a>
+                        <a href="https://study-tracker.netlify.app/" target="_blank" rel="noopener noreferrer" class="tool-link">
+                            Acessar Tracker <span class="link-icon">↗</span>
+                        </a>
                     </div>
 
-                    <div class="card">
-                        <div class="card-icon">🎯</div>
-                        <h4>Desafio 67 Dias</h4>
-                        <p>Transforme sua vida em 67 dias com hábitos consistentes e acompanhamento diário</p>
-                        <div class="card-tags">
+                    <div class="tool-card" tabindex="0">
+                        <div class="tool-header">
+                            <div class="tool-icon">🎯</div>
+                            <h3 class="tool-title">Desafio 67 Dias</h3>
+                        </div>
+                        <p class="tool-description">
+                            Transforme sua vida em 67 dias com hábitos consistentes e acompanhamento diário.
+                        </p>
+                        <div class="tool-tags">
                             <span class="tag">Hábitos</span>
                             <span class="tag">Desafio</span>
                             <span class="tag">Crescimento</span>
                         </div>
-                        <a href="https://66dias.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn primary" aria-label="Acessar Desafio 67 Dias">Acessar Desafio</a>
-                    </div>
-                    
-                    <!-- Espaço para futuras seções -->
-                    <div class="card coming-soon">
-                        <div class="card-icon">✨</div>
-                        <h4>Mais Funcionalidades</h4>
-                        <p>Novas ferramentas e recursos serão adicionados em breve. Acompanhe nosso desenvolvimento!</p>
-                        <div class="card-tags">
-                            <span class="tag">Em Breve</span>
-                            <span class="tag">Novidades</span>
-                        </div>
-                        <span class="btn disabled">Em Desenvolvimento</span>
+                        <a href="https://66dias.netlify.app/" target="_blank" rel="noopener noreferrer" class="tool-link">
+                            Iniciar Desafio <span class="link-icon">↗</span>
+                        </a>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
     </main>
 
-    <footer>
+    <!-- Footer -->
+    <footer class="footer">
         <div class="container">
-            <p>&copy; 2025 Meu Site de Tudo. Todos os direitos reservados.</p>
+            <p class="footer-text">
+                Feito com <span class="heart">❤️</span> para organizar e descobrir conteúdos interessantes
+            </p>
         </div>
     </footer>
 
-    <script type="module" src="js/firebase-config.js"></script>
-    <script type="module" src="js/main.js"></script>
+    <!-- Notification System -->
+    <div id="notification-container" class="notification-container" aria-live="polite"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="auth.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

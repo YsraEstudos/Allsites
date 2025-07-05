@@ -61,7 +61,6 @@ As configurações já estão aplicadas no projeto. Para usar:
 1. **Ative no Firebase Console**:
    - Authentication (Google + Anônimo)
    - Firestore Database (modo teste)
-   - Storage (upload de fotos)
 
 2. **Configure as regras de segurança**:
 
@@ -88,68 +87,3 @@ service firebase.storage {
   }
 }
 ```
-
-## Como Usar
-
-1. **Sirva via HTTP** (não abra diretamente no navegador):
-   ```bash
-   # Live Server (VS Code): Clique direito em index.html > "Open with Live Server"
-   # Python: python -m http.server 8000
-   # Node.js: npx http-server
-   ```
-
-2. **Acesse e teste** as funcionalidades de login
-
-## Estrutura Final
-
-```
-/
-├── index.html           # Página principal  
-├── estilo.css          # Estilos
-├── firebase-config.js  # Configuração Firebase
-├── auth/
-│   └── login.html      # Página de login
-└── README.md           # Este arquivo
-```
-
-**Total: 5 arquivos essenciais** ✨
-
-## Resolução de Problemas
-
-**Upload de foto não funciona?**
-- Verifique se está logado com Google (não anônimo)
-- Confirme as regras do Storage acima
-- Use arquivos JPG/PNG/GIF/WebP (máx 5MB)
-
-**Erro de autenticação?**
-- Verifique se Authentication está ativo no Firebase Console
-- Confirme se Firestore está configurado
-
-## 🔐 Autenticação Firebase
-
-### Configuração
-O site agora possui integração completa com Firebase Authentication:
-
-- **Google Sign-In**: Login com conta Google
-- **Login Anônimo**: Acesso como visitante temporário
-- **Gerenciamento de Estado**: Persistência entre sessões
-- **Vinculação de Contas**: Possibilidade de vincular conta Google a usuário anônimo
-
-### Funcionalidades de Autenticação
-- ✅ Login com Google (popup)
-- ✅ Login anônimo (visitante)
-- ✅ Logout seguro
-- ✅ Detecção automática de estado de login
-- ✅ Persistência de dados do usuário
-- ✅ Vinculação de conta Google a usuário anônimo
-- ✅ Tratamento de erros em português
-
-### Como Testar
-1. Use o arquivo `teste-firebase.html` para testes rápidos
-2. Certifique-se de estar executando em um servidor web (não `file://`)
-3. Verifique o console do navegador para logs detalhados
-
-### Segurança
-- Content Security Policy atualizado para Firebase
-- Configuração adequada de domínios autorizados
-- Tratamento seguro de tokens de autenticação
