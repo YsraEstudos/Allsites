@@ -153,39 +153,42 @@ export const updateUserProfile = async (uid, profileData) => {
     }
 };
 
-export const uploadProfilePhoto = async (uid, file) => {
-    try {
-        if (!file) {
-            throw new Error('No file provided');
-        }
-        
-        // Validate file type
-        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-        if (!allowedTypes.includes(file.type)) {
-            throw new Error('Tipo de arquivo não suportado. Use JPG, PNG, GIF ou WebP.');
-        }
-        
-        // Validate file size (5MB limit)
-        const maxSize = 5 * 1024 * 1024; // 5MB
-        if (file.size > maxSize) {
-            throw new Error('Arquivo muito grande. Tamanho máximo: 5MB.');
-        }
-        
-        // Create a reference to the file location
-        const storageRef = ref(storage, `profile-photos/${uid}/${Date.now()}-${file.name}`);
-        
-        // Upload the file and get download URL
-        const snapshot = await uploadBytes(storageRef, file);
-        const downloadURL = await getDownloadURL(snapshot.ref);
-        
-        return { success: true, photoURL: downloadURL };
-    } catch (error) {
-        console.error('Error uploading profile photo:', error);
-        return { success: false, error: error.message };
+// --- Profile Photo Management ---
+export async function uploadProfilePhoto(userId, file) {
+    if (!userId || !file) {
+        return { success: false, error: 'User ID and file are required' };
     }
-};
+    
+    const storage = getStorage();
+    const storageRef = ref(storage, `profile-photos/${userId}/${file.name}`);
+    
+    try {
+        // 1. Upload the file and wait for it to complete
+        const snapshot = await uploadBytes(storageRef, file);
+        
+        // 2. Get the download URL from the snapshot reference
+        const photoURL = await getDownloadURL(snapshot.ref);
+        
+        return { success: true, photoURL: photoURL };
+        
+    } catch (error) {
+        console.error("Error uploading photo:", error);
+        
+        // Provide more specific error feedback
+        let errorMessage = 'Ocorreu um erro desconhecido.';
+        if (error.code === 'storage/unauthorized') {
+            errorMessage = 'Você não tem permissão para fazer o upload. Verifique as regras de segurança do Firebase Storage.';
+        } else if (error.code === 'storage/canceled') {
+            errorMessage = 'O upload foi cancelado.';
+        } else if (error.code === 'storage/object-not-found') {
+            errorMessage = 'O arquivo não foi encontrado.';
+        }
+        
+        return { success: false, error: errorMessage };
+    }
+}
 
-export const deleteProfilePhoto = async (uid, photoURL) => {
+export async function deleteProfilePhoto(userId, photoURL) {
     try {
         if (!photoURL) {
             return { success: true };
