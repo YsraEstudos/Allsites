@@ -53,17 +53,18 @@ onAuthStateChange(async (user) => {
         
         // Show/hide link account button for anonymous users
         if (user.isAnonymous) {
-            linkAccountBtn.style.display = 'block';
+            linkAccountBtn.classList.remove('hidden');
             linkAccountBtn.title = 'Vincular com Google para salvar seus dados';
         } else {
-            linkAccountBtn.style.display = 'none';
+            linkAccountBtn.classList.add('hidden');
         }
         
         // Load user profile
         await loadUserProfile(user);
         
-        userInfo.style.display = 'flex';
-        loginPrompt.style.display = 'none';
+        userInfo.classList.remove('hidden');
+        userInfo.classList.add('d-flex');
+        loginPrompt.classList.add('hidden');
     } else {
         // Clear session timeout when user signs out
         if (sessionTimeout) clearTimeout(sessionTimeout);
@@ -92,11 +93,12 @@ async function loadUserProfile(user) {
         // Update profile photo
         if (photoURL && !user.isAnonymous) {
             profileImage.src = photoURL;
-            profileImage.style.display = 'block';
-            profileInitials.style.display = 'none';
+            profileImage.classList.remove('hidden');
+            profileInitials.classList.add('hidden');
         } else {
-            profileImage.style.display = 'none';
-            profileInitials.style.display = 'flex';
+            profileImage.classList.add('hidden');
+            profileInitials.classList.remove('hidden');
+            profileInitials.classList.add('d-flex');
             if (user.isAnonymous) {
                 profileInitials.textContent = '👤';
             } else {
@@ -114,8 +116,9 @@ async function loadUserProfile(user) {
             userName.textContent = user.email.split('@')[0];
             profileInitials.textContent = getUserInitials('', user.email);
         }
-        profileImage.style.display = 'none';
-        profileInitials.style.display = 'flex';
+        profileImage.classList.add('hidden');
+        profileInitials.classList.remove('hidden');
+        profileInitials.classList.add('d-flex');
     }
 }
 

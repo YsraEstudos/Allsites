@@ -1,7 +1,7 @@
 <!DOC    <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
         script-src 'self' https://www.gstatic.com https://apis.google.com https://accounts.google.com;
-        style-src 'self' 'unsafe-inline';
+        style-src 'self';
         img-src 'self' data: https:;
         connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://www.googleapis.com https://www.gstatic.com;
         frame-src 'self' https://accounts.google.com https://*.firebaseapp.com;
@@ -14,8 +14,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="
         default-src 'self';
-        script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com https://accounts.google.com;
-        style-src 'self' 'unsafe-inline';
+        script-src 'self' https://www.gstatic.com https://apis.google.com https://accounts.google.com;
+        style-src 'self';
         img-src 'self' data: https:;
         connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://www.googleapis.com https://www.gstatic.com;
         frame-src 'self' https://accounts.google.com https://*.firebaseapp.com;
@@ -28,174 +28,7 @@
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <title>Login - Meu Site de Tudo</title>
     <link rel="stylesheet" href="../estilo.css">
-    <style>
-        .login-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-            padding: 20px;
-        }
-
-        .login-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 400px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .login-logo {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            margin: 0 auto 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-        }
-
-        .login-title {
-            font-size: 1.8rem;
-            color: #ffffff;
-            margin-bottom: 8px;
-            font-weight: 700;
-        }
-
-        .login-subtitle {
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 32px;
-            font-size: 14px;
-        }
-
-        .login-options {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .login-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 14px 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .login-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
-        }
-
-        .login-btn:active {
-            transform: translateY(0);
-        }
-
-        .google-btn {
-            background: #4285f4;
-            border-color: #4285f4;
-        }
-
-        .google-btn:hover {
-            background: #3367d6;
-            border-color: #3367d6;
-        }
-
-        .anonymous-btn {
-            background: rgba(128, 128, 128, 0.2);
-            border-color: rgba(128, 128, 128, 0.3);
-        }
-
-        .anonymous-btn:hover {
-            background: rgba(128, 128, 128, 0.3);
-            border-color: rgba(128, 128, 128, 0.4);
-        }
-
-        .login-divider {
-            position: relative;
-            margin: 24px 0;
-            text-align: center;
-        }
-
-        .login-divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .login-divider span {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 0 16px;
-            color: rgba(255, 255, 255, 0.5);
-            font-size: 12px;
-        }
-
-        .login-footer {
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .back-link {
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            font-size: 14px;
-            transition: color 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: white;
-        }
-
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .error-message {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid rgba(255, 0, 0, 0.3);
-            color: #ff6b6b;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            display: none;
-        }
-
-        @media (max-width: 480px) {
-            .login-card {
-                padding: 24px;
-                margin: 0 16px;
-            }
-            
-            .login-title {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="login.css">
 </head>
 <body>
     <div class="login-container">

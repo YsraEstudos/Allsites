@@ -642,6 +642,19 @@ footer {
     cursor: not-allowed;
 }
 
+/* Helper classes */
+.hidden {
+    display: none !important;
+}
+
+.d-flex {
+    display: flex !important;
+}
+
+.d-block {
+    display: block !important;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     header .container {
