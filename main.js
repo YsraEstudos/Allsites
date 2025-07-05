@@ -13,41 +13,10 @@ const linkAccountBtn = document.getElementById('linkAccountBtn');
 
 let currentUser = null;
 
-// Security improvements
-let sessionTimeout;
-const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
-
-function resetSessionTimeout() {
-    if (sessionTimeout) clearTimeout(sessionTimeout);
-    
-    if (currentUser) {
-        sessionTimeout = setTimeout(() => {
-            if (confirm('Sua sessão expirou por inatividade. Deseja continuar conectado?')) {
-                resetSessionTimeout();
-            } else {
-                logoutUser();
-            }
-        }, SESSION_TIMEOUT);
-    }
-}
-
-// Track user activity
-const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-activityEvents.forEach(event => {
-    document.addEventListener(event, () => {
-        if (currentUser) {
-            resetSessionTimeout();
-        }
-    }, { passive: true });
-});
-
 // Auth state observer
 onAuthStateChange(async (user) => {
     currentUser = user;
     if (user) {
-        // Reset session timeout when user signs in
-        resetSessionTimeout();
-        
         // User is signed in
         userEmail.textContent = user.email || 'Usuário Anônimo';
         
@@ -66,9 +35,6 @@ onAuthStateChange(async (user) => {
         userInfo.classList.add('d-flex');
         loginPrompt.classList.add('hidden');
     } else {
-        // Clear session timeout when user signs out
-        if (sessionTimeout) clearTimeout(sessionTimeout);
-        
         // User is signed out - redirect to login
         window.location.href = 'auth/login.html';
     }
