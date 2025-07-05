@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self'; 
+        script-src 'self' https://www.gstatic.com https://apis.google.com; 
+        style-src 'self' 'unsafe-inline'; 
+        img-src 'self' data: https: https://lh3.googleusercontent.com; 
+        connect-src 'self' https://firestore.googleapis.com https://firebase.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com; 
+        frame-src https://accounts.google.com; 
+        object-src 'none';">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta name="description" content="Um espaço minimalista para organizar e descobrir conteúdos interessantes. Acesse ferramentas para YouTube, estudos e desenvolvimento de hábitos.">
+    <meta name="keywords" content="organização, produtividade, estudos, YouTube, hábitos, ferramentas, desenvolvimento pessoal">
+    <meta name="author" content="Meu Site de Tudo">
+    <meta property="og:title" content="Meu Site de Tudo - Home">
+    <meta property="og:description" content="Um espaço minimalista para organizar e descobrir conteúdos interessantes">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://meusitedetudo.com">
+    <meta property="og:image" content="https://meusitedetudo.com/assets/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Meu Site de Tudo - Home">
+    <meta name="twitter:description" content="Um espaço minimalista para organizar e descobrir conteúdos interessantes">
+    <meta name="twitter:image" content="https://meusitedetudo.com/assets/twitter-image.jpg">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="alternate icon" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+    <meta name="theme-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SiteTudo">
+    <title>Meu Site de Tudo - Home</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Carregando...</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="container">
+            <h1>Meu Site de Tudo</h1>
+            <div class="auth-section" id="authSection">
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <div class="user-profile">
+                        <div class="profile-photo" id="profilePhoto">
+                            <img id="profileImage" style="display: none;" alt="Foto do perfil">
+                            <div class="profile-initials" id="profileInitials"></div>
+                        </div>
+                        <div class="user-details">
+                            <span class="user-name" id="userName"></span>
+                            <span class="user-email" id="userEmail"></span>
+                        </div>
+                        <div class="user-actions">
+                            <button id="profileBtn" class="profile-btn" title="Editar Perfil">⚙️</button>
+                            <button id="linkAccountBtn" class="link-account-btn" title="Vincular Conta Google" style="display: none;">🔗</button>
+                            <button id="logoutBtn" class="logout-btn">Sair</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="login-prompt" id="loginPrompt">
+                    <a href="auth/login.html" class="login-link">Entrar</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h2 class="typing-effect">Bem-vindo ao Meu Site de Tudo</h2>
+                <p>Um espaço minimalista para organizar e descobrir conteúdos interessantes.</p>
+                <div class="hero-stats" style="margin-top: 24px;">
+                    <div class="stat-item">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Ferramentas Ativas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Gratuito</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Disponível</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="sections">
+                <h3>Seções Disponíveis</h3>
+                <div class="section-cards">
+                    <div class="card">
+                        <div class="card-icon">🎬</div>
+                        <h4>Hub Organizador do YouTube</h4>
+                        <p>Organize, anote e gerencie seus vídeos e canais favoritos do YouTube com categorias personalizadas</p>
+                        <div class="card-tags">
+                            <span class="tag">Organização</span>
+                            <span class="tag">YouTube</span>
+                            <span class="tag">Produtividade</span>
+                        </div>
+                        <a href="https://youtube-hub.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn primary" aria-label="Acessar Hub Organizador do YouTube">Acessar Hub</a>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">📚</div>
+                        <h4>Rastreador de Estudos</h4>
+                        <p>Adicione tópicos de estudo e acompanhe seu progresso diário marcando 3 exercícios por matéria</p>
+                        <div class="card-tags">
+                            <span class="tag">Estudos</span>
+                            <span class="tag">Progresso</span>
+                            <span class="tag">Educação</span>
+                        </div>
+                        <a href="https://study-tracker.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn primary" aria-label="Acessar Rastreador de Estudos">Acessar Rastreador</a>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-icon">🎯</div>
+                        <h4>Desafio 67 Dias</h4>
+                        <p>Transforme sua vida em 67 dias com hábitos consistentes e acompanhamento diário</p>
+                        <div class="card-tags">
+                            <span class="tag">Hábitos</span>
+                            <span class="tag">Desafio</span>
+                            <span class="tag">Crescimento</span>
+                        </div>
+                        <a href="https://66dias.netlify.app/" target="_blank" rel="noopener noreferrer" class="btn primary" aria-label="Acessar Desafio 67 Dias">Acessar Desafio</a>
+                    </div>
+                    
+                    <!-- Espaço para futuras seções -->
+                    <div class="card coming-soon">
+                        <div class="card-icon">✨</div>
+                        <h4>Mais Funcionalidades</h4>
+                        <p>Novas ferramentas e recursos serão adicionados em breve. Acompanhe nosso desenvolvimento!</p>
+                        <div class="card-tags">
+                            <span class="tag">Em Breve</span>
+                            <span class="tag">Novidades</span>
+                        </div>
+                        <span class="btn disabled">Em Desenvolvimento</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Meu Site de Tudo. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
