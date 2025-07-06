@@ -339,12 +339,12 @@ body {
 }
 
 /* Cores dos ícones baseadas nas cores de ação */
-[data-color="red"] .tool-icon svg { fill: #ff4444; }
-[data-color="blue"] .tool-icon svg { fill: var(--color-primary); }
-[data-color="purple"] .tool-icon svg { fill: var(--color-secondary); }
-[data-color="green"] .tool-icon svg { fill: var(--color-success); }
-[data-color="yellow"] .tool-icon svg { fill: var(--color-warning); }
-[data-color="orange"] .tool-icon svg { fill: #ff8c00; }
+[data-color="red"] .tool-icon svg { fill: #ff4444 !important; }
+[data-color="blue"] .tool-icon svg { fill: var(--color-primary) !important; }
+[data-color="purple"] .tool-icon svg { fill: var(--color-secondary) !important; }
+[data-color="green"] .tool-icon svg { fill: var(--color-success) !important; }
+[data-color="yellow"] .tool-icon svg { fill: var(--color-warning) !important; }
+[data-color="orange"] .tool-icon svg { fill: #ff8c00 !important; }
 
 /* Animações de hover para ícones específicos */
 [data-color="red"]:hover .tool-icon {
