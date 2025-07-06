@@ -1,0 +1,497 @@
+/* Reset e Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Tema Escuro Principal */
+    --bg-primary: #111827; /* Fundo principal (cinza muito escuro) */
+    --bg-surface: #1f2937; /* Superfícies como cards (cinza escuro) */
+    --text-primary: #f3f4f6; /* Texto principal (cinza claro) */
+    --text-secondary: #9ca3af; /* Texto secundário */
+    --outline: #374151; /* Contornos e divisórias */
+
+    /* Cores de Ação */
+    --color-danger: #ef4444; /* Vermelho - ações destrutivas */
+    --color-primary: #3b82f6; /* Azul - ações primárias */
+    --color-success: #22c55e; /* Verde - sucesso */
+    --color-secondary: #8b5cf6; /* Roxo - ações secundárias */
+    --color-warning: #f59e0b; /* Laranja - avisos */
+    --color-info: #06b6d4; /* Ciano - informações */
+
+    /* Tipografia */
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-size-body: 16px;
+    --font-size-title: 20px;
+    --font-size-headline: 28px;
+
+    /* Espaçamento */
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+
+    /* Elevação (Sombras) */
+    --elevation-1: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.4);
+    --elevation-2: 0 3px 6px rgba(0,0,0,0.4), 0 3px 6px rgba(0,0,0,0.5);
+    --elevation-3: 0 10px 20px rgba(0,0,0,0.5), 0 6px 6px rgba(0,0,0,0.6);
+    --elevation-4: 0 14px 28px rgba(0,0,0,0.6), 0 10px 10px rgba(0,0,0,0.7);
+
+    /* Raio da Borda */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    font-size: var(--font-size-body);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Header */
+.header {
+    background-color: rgba(31, 41, 55, 0.8); /* Cor de superfície com transparência */
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--outline);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: box-shadow 0.3s ease;
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-md) var(--spacing-lg);
+    text-align: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Conteúdo Principal */
+.main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--spacing-lg);
+}
+
+.hero {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.hero-title {
+    font-size: var(--font-size-headline);
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Grid de Ferramentas */
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+/* Cards de Ferramentas (Componente .card) */
+.tool-card,
+.card {
+    background-color: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--elevation-2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid var(--outline);
+    overflow: hidden;
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+}
+
+.tool-card:hover,
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--elevation-4);
+    text-decoration: none;
+    color: inherit;
+}
+
+.tool-card:visited {
+    color: inherit;
+}
+
+/* Indicador de clique nos cards */
+.tool-card {
+    cursor: pointer;
+}
+
+.tool-card::after {
+    content: '';
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    width: 20px;
+    height: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%239ca3af' viewBox='0 0 24 24'%3E%3Cpath d='M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    z-index: 5;
+}
+
+.tool-card:hover::after {
+    opacity: 1;
+}
+
+/* Estados dos Cards */
+.card.is-active {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.card.is-highlighted {
+    opacity: 0.8;
+    border-color: var(--color-secondary);
+}
+
+/* Badge - Selos de Status */
+.badge {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    background-color: var(--color-primary);
+    color: white;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    display: none;
+    z-index: 10;
+}
+
+.badge.badge-success {
+    background-color: var(--color-success);
+}
+
+.badge.badge-danger {
+    background-color: var(--color-danger);
+}
+
+.badge.badge-warning {
+    background-color: var(--color-warning);
+}
+
+.badge.badge-secondary {
+    background-color: var(--color-secondary);
+}
+
+/* Mostrar badges baseado no estado do card pai */
+.card.is-new .badge,
+.card.is-completed .badge,
+.card.is-important .badge {
+    display: block;
+}
+
+/* Category Widget - Container Expansível (Accordion) */
+.category-widget {
+    border: 1px solid var(--outline);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    background-color: var(--bg-surface);
+}
+
+.category-header {
+    padding: var(--spacing-md);
+    background-color: var(--bg-surface);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.category-header:hover {
+    background-color: rgba(55, 65, 81, 0.5);
+}
+
+.category-header.is-open {
+    border-bottom-color: var(--outline);
+}
+
+.chevron-icon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+    fill: var(--text-secondary);
+}
+
+.category-header.is-open .chevron-icon {
+    transform: rotate(180deg);
+}
+
+.category-content-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease;
+}
+
+.category-widget.is-open .category-content-wrapper {
+    grid-template-rows: 1fr;
+}
+
+.category-content {
+    overflow: hidden;
+    padding: 0 var(--spacing-md);
+}
+
+.category-widget.is-open .category-content {
+    padding: var(--spacing-md);
+}
+
+/* Modal Backdrop - Fundo de Sobreposição */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(17, 24, 39, 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-backdrop.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xl);
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--elevation-4);
+    border: 1px solid var(--outline);
+}
+
+/* Estilização dos Ícones */
+.tool-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background-color: rgba(255, 255, 255, 0.08);
+    transition: background-color 0.3s ease;
+}
+
+.tool-icon svg {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.3s ease;
+}
+
+.tool-card:hover .tool-icon {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.tool-card:hover .tool-icon svg {
+    transform: scale(1.1);
+}
+
+/* Cores dos ícones baseadas nas cores de ação */
+[data-color="red"] .tool-icon svg { fill: #ff4444 !important; }
+[data-color="blue"] .tool-icon svg { fill: var(--color-primary) !important; }
+[data-color="purple"] .tool-icon svg { fill: var(--color-secondary) !important; }
+[data-color="green"] .tool-icon svg { fill: var(--color-success) !important; }
+[data-color="yellow"] .tool-icon svg { fill: var(--color-warning) !important; }
+[data-color="orange"] .tool-icon svg { fill: #ff8c00 !important; }
+
+/* Animações de hover para ícones específicos */
+[data-color="red"]:hover .tool-icon {
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+[data-color="blue"]:hover .tool-icon {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+[data-color="purple"]:hover .tool-icon {
+    background-color: rgba(139, 92, 246, 0.1);
+}
+
+[data-color="green"]:hover .tool-icon {
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+[data-color="yellow"]:hover .tool-icon {
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+[data-color="orange"]:hover .tool-icon {
+    background-color: rgba(255, 140, 0, 0.1);
+}
+
+/* Título e Descrição das Ferramentas */
+.tool-title {
+    font-size: var(--font-size-title);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.tool-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    text-align: center;
+    margin: 0;
+}
+
+/* Classes Utilitárias de Cores de Ação */
+.text-danger { color: var(--color-danger); }
+.text-primary { color: var(--color-primary); }
+.text-success { color: var(--color-success); }
+.text-secondary { color: var(--color-secondary); }
+.text-warning { color: var(--color-warning); }
+.text-info { color: var(--color-info); }
+
+.bg-danger { background-color: var(--color-danger); }
+.bg-primary { background-color: var(--color-primary); }
+.bg-success { background-color: var(--color-success); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-warning { background-color: var(--color-warning); }
+.bg-info { background-color: var(--color-info); }
+
+.border-danger { border-color: var(--color-danger); }
+.border-primary { border-color: var(--color-primary); }
+.border-success { border-color: var(--color-success); }
+.border-secondary { border-color: var(--color-secondary); }
+.border-warning { border-color: var(--color-warning); }
+.border-info { border-color: var(--color-info); }
+
+/* Botões com Cores de Ação */
+.btn {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.btn-danger {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.btn-success {
+    background-color: var(--color-success);
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #16a34a;
+}
+
+.btn-secondary {
+    background-color: var(--color-secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #7c3aed;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .main, .header-content {
+        padding: var(--spacing-lg) var(--spacing-md);
+    }
+
+    .hero-title {
+        font-size: 24px;
+    }
+
+    .hero-subtitle {
+        font-size: 16px;
+    }
+
+    .tools-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .tool-icon {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .tool-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .tool-title {
+        font-size: 18px;
+    }
+    
+    .tool-description {
+        font-size: 13px;
+    }
+}
