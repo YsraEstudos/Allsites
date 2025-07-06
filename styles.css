@@ -110,7 +110,7 @@ body {
 /* Grid de Ferramentas */
 .tools-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: var(--spacing-lg);
 }
 
@@ -279,6 +279,82 @@ body {
     border: 1px solid var(--outline);
 }
 
+/* Estilização dos Ícones */
+.tool-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--spacing-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    background-color: rgba(255, 255, 255, 0.08);
+    transition: background-color 0.3s ease;
+}
+
+.tool-icon svg {
+    width: 32px;
+    height: 32px;
+    transition: transform 0.3s ease;
+}
+
+.tool-card:hover .tool-icon {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.tool-card:hover .tool-icon svg {
+    transform: scale(1.1);
+}
+
+/* Cores dos ícones baseadas nas cores de ação */
+[data-color="red"] .tool-icon svg { fill: #ff4444; }
+[data-color="blue"] .tool-icon svg { fill: var(--color-primary); }
+[data-color="purple"] .tool-icon svg { fill: var(--color-secondary); }
+[data-color="green"] .tool-icon svg { fill: var(--color-success); }
+[data-color="yellow"] .tool-icon svg { fill: var(--color-warning); }
+[data-color="orange"] .tool-icon svg { fill: #ff8c00; }
+
+/* Animações de hover para ícones específicos */
+[data-color="red"]:hover .tool-icon {
+    background-color: rgba(255, 68, 68, 0.1);
+}
+
+[data-color="blue"]:hover .tool-icon {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+[data-color="purple"]:hover .tool-icon {
+    background-color: rgba(139, 92, 246, 0.1);
+}
+
+[data-color="green"]:hover .tool-icon {
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+[data-color="yellow"]:hover .tool-icon {
+    background-color: rgba(245, 158, 11, 0.1);
+}
+
+[data-color="orange"]:hover .tool-icon {
+    background-color: rgba(255, 140, 0, 0.1);
+}
+
+/* Título e Descrição das Ferramentas */
+.tool-title {
+    font-size: var(--font-size-title);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.tool-description {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    text-align: center;
+    margin: 0;
+}
+
 /* Classes Utilitárias de Cores de Ação */
 .text-danger { color: var(--color-danger); }
 .text-primary { color: var(--color-primary); }
@@ -367,5 +443,23 @@ body {
     .tools-grid {
         grid-template-columns: 1fr;
         gap: var(--spacing-md);
+    }
+    
+    .tool-icon {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .tool-icon svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .tool-title {
+        font-size: 18px;
+    }
+    
+    .tool-description {
+        font-size: 13px;
     }
 }
